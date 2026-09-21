@@ -9,7 +9,10 @@ object ProblemSeedData {
 
     fun getAllProblems(): List<Problem> = listOf(
 
-        // ========== POWER ==========
+        // ═══════════════════════════════════════════════════════
+        //  POWER (تغذیه و روشن شدن) - 10 مشکل
+        // ═══════════════════════════════════════════════════════
+
         Problem(
             id = "problem_no_power",
             title = "گوشی روشن نمی‌شود",
@@ -17,44 +20,200 @@ object ProblemSeedData {
             category = ProblemCategory.POWER,
             severity = ProblemSeverity.HIGH,
             symptoms = listOf("هیچ واکنشی به کلید Power", "عدم نمایش شارژ", "جریان صفر روی منبع تغذیه"),
-            commonCauses = listOf("خرابی باتری", "خرابی PMIC", "خرابی CPU"),
+            commonCauses = listOf("خرابی باتری", "خرابی PMIC", "خرابی CPU", "کوتاهی در خط VBAT"),
             estimatedFixTime = "30-60 دقیقه",
             estimatedCost = "200-800 هزار تومان",
             difficulty = RepairDifficulty.HARD,
-            requiredTools = listOf("مولتی‌متر", "منبع تغذیه DC"),
-            requiredParts = listOf("باتری", "PMIC"),
-            warningNotes = listOf("قبل از هر اقدامی باتری را جدا کنید"),
+            requiredTools = listOf("مولتی‌متر", "منبع تغذیه DC", "هیتر"),
+            requiredParts = listOf("باتری", "PMIC", "خازن"),
+            warningNotes = listOf("قبل از هر اقدامی باتری را جدا کنید", "تست حرارتی با احتیاط"),
             successRate = 75,
             isCommon = true,
-            relatedProblems = listOf("problem_no_charge")
+            relatedProblems = listOf("problem_no_charge", "problem_bootloop")
         ),
+
         Problem(
             id = "problem_restart_random",
             title = "ری‌استارت خودبه‌خود",
             description = "دستگاه در حین کار به طور تصادفی خاموش و روشن می‌شود.",
             category = ProblemCategory.POWER,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("ری‌استارت ناگهانی", "خاموش شدن در بازی", "خاموش شدن در شارژ"),
-            commonCauses = listOf("خرابی باتری", "خرابی PMIC", "مشکل نرم‌افزاری"),
+            symptoms = listOf("ری‌استارت ناگهانی", "خاموش شدن در بازی", "خاموش شدن هنگام شارژ"),
+            commonCauses = listOf("خرابی باتری", "خرابی PMIC", "مشکل نرم‌افزاری", "داغ شدن CPU"),
             estimatedFixTime = "30-60 دقیقه",
             estimatedCost = "150-600 هزار تومان",
             difficulty = RepairDifficulty.MEDIUM,
             requiredTools = listOf("مولتی‌متر", "منبع تغذیه DC"),
-            requiredParts = listOf("باتری"),
+            requiredParts = listOf("باتری", "خمیر سیلیکون"),
             warningNotes = emptyList(),
             successRate = 80,
             isCommon = true,
             relatedProblems = listOf("problem_battery_drain")
         ),
 
-        // ========== CHARGING ==========
+        Problem(
+            id = "problem_bootloop",
+            title = "بوت‌لوپ (ری‌استارت مداوم)",
+            description = "دستگاه به طور مداوم در لوگوی اولیه راه‌اندازی مجدد می‌شود.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("ری‌استارت مداوم", "گیر کردن در لوگو", "ورود مکرر به Recovery"),
+            commonCauses = listOf("خرابی نرم‌افزار", "خرابی Storage", "ناسازگاری رام", "خرابی CPU"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "150-600 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("کامپیوتر", "کابل USB"),
+            requiredParts = emptyList(),
+            warningNotes = listOf("قبل از فلش، بکاپ NVRAM بگیرید"),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_power")
+        ),
+
+        Problem(
+            id = "problem_shutdown_low_battery",
+            title = "خاموشی در درصد بالا",
+            description = "دستگاه در درصد ۳۰ تا ۵۰ به طور ناگهانی خاموش می‌شود.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("خاموشی در 30-50%", "افت ناگهانی درصد"),
+            commonCauses = listOf("باتری فرسوده", "کالیبراسیون نادرست", "خرابی PMIC"),
+            estimatedFixTime = "20-40 دقیقه",
+            estimatedCost = "150-500 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("باتری"),
+            warningNotes = emptyList(),
+            successRate = 90,
+            isCommon = true,
+            relatedProblems = listOf("problem_battery_drain")
+        ),
+
+        Problem(
+            id = "problem_no_display",
+            title = "روشن می‌شود اما تصویر ندارد",
+            description = "دستگاه روشن می‌شود (صدا/ویبره دارد) اما صفحه سیاه است.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("صفحه سیاه", "صدای روشن شدن دارد", "ویبره دارد"),
+            commonCauses = listOf("خرابی LCD", "خرابی Backlight", "قطع خطوط MIPI"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "400-1500 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "میکروسکوپ"),
+            requiredParts = listOf("LCD", "Backlight IC"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_lcd_broken")
+        ),
+
+        Problem(
+            id = "problem_power_button_stuck",
+            title = "کلید Power گیر کرده",
+            description = "کلید Power به طور مکانیکی گیر کرده یا شل شده است.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("کلید سفت است", "کلید آزاد نمی‌شود", "دستگاه مدام ری‌استارت می‌شود"),
+            commonCauses = listOf("شکستگی کلید", "ورود گرد و غبار", "ضربه"),
+            estimatedFixTime = "20-45 دقیقه",
+            estimatedCost = "100-350 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("پیچ‌گوشتی", "ابزار باز کردن"),
+            requiredParts = listOf("کلید Power"),
+            warningNotes = emptyList(),
+            successRate = 95,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_dead_after_water",
+            title = "خاموشی پس از آب‌خوردگی",
+            description = "دستگاه پس از تماس با مایعات خاموش شده و روشن نمی‌شود.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.CRITICAL,
+            symptoms = listOf("خاموشی پس از آب", "داغ شدن برد", "بوی سوختگی"),
+            commonCauses = listOf("کوتاهی در برد", "خوردگی قطعات", "خرابی PMIC"),
+            estimatedFixTime = "60-180 دقیقه",
+            estimatedCost = "500-2500 هزار تومان",
+            difficulty = RepairDifficulty.EXPERT,
+            requiredTools = listOf("اولتراسونیک", "میکروسکوپ", "هیتر"),
+            requiredParts = listOf("IC معیوب"),
+            warningNotes = listOf("دستگاه آب‌خورده را هرگز روشن نکنید", "قبل از تست، برد را کاملاً بشویید"),
+            successRate = 50,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_power")
+        ),
+
+        Problem(
+            id = "problem_hang_restart",
+            title = "هنگ و ری‌استارت",
+            description = "دستگاه در حین کار هنگ می‌کند و ری‌استارت می‌شود.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("هنگ مکرر", "کندی سیستم", "ری‌استارت"),
+            commonCauses = listOf("داغ شدن CPU", "خرابی RAM", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "150-600 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = emptyList(),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_restart_random")
+        ),
+
+        Problem(
+            id = "problem_auto_shutdown",
+            title = "خاموشی خودکار",
+            description = "دستگاه به طور خودکار خاموش می‌شود، مخصوصاً در تماس یا بازی.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("خاموشی خودکار", "خاموشی در تماس", "داغ شدن"),
+            commonCauses = listOf("داغ شدن CPU", "خرابی PMIC", "باتری ضعیف"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "150-800 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر", "دوربین حرارتی"),
+            requiredParts = listOf("خمیر سیلیکون"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_restart_random")
+        ),
+
+        Problem(
+            id = "problem_no_vibration",
+            title = "ویبره کار نمی‌کند",
+            description = "دستگاه روی حالت ویبره هیچ لرزشی ندارد.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("عدم لرزش", "لرزش ضعیف"),
+            commonCauses = listOf("خرابی موتور ویبره", "قطع کانکتور", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "20-45 دقیقه",
+            estimatedCost = "100-300 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("موتور ویبره"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  CHARGING (شارژ و باتری) - 10 مشکل
+        // ═══════════════════════════════════════════════════════
+
         Problem(
             id = "problem_no_charge",
             title = "شارژ نمی‌شود",
             description = "دستگاه روشن می‌شود اما با شارژر، درصد باتری افزایش نمی‌یابد.",
             category = ProblemCategory.CHARGING,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("عدم افزایش درصد باتری", "قطع و وصل شارژ", "پیام شارژ نامناسب"),
+            symptoms = listOf("عدم افزایش درصد", "قطع و وصل شارژ", "پیام شارژ نامناسب"),
             commonCauses = listOf("خرابی IC شارژ", "خرابی کانکتور", "قطع خطوط CC"),
             estimatedFixTime = "20-40 دقیقه",
             estimatedCost = "100-500 هزار تومان",
@@ -66,10 +225,11 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = listOf("problem_no_power")
         ),
+
         Problem(
             id = "problem_slow_charge",
             title = "شارژ کند",
-            description = "دستگاه شارژ می‌شود اما با سرعت بسیار کم.",
+            description = "دستگاه شارژ می‌شود اما سرعت آن بسیار کم است.",
             category = ProblemCategory.CHARGING,
             severity = ProblemSeverity.LOW,
             symptoms = listOf("شارژ بسیار کند", "داغ شدن شارژر"),
@@ -84,6 +244,7 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = listOf("problem_no_charge")
         ),
+
         Problem(
             id = "problem_battery_drain",
             title = "خالی شدن سریع باتری",
@@ -102,6 +263,7 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = listOf("problem_restart_random")
         ),
+
         Problem(
             id = "problem_battery_swollen",
             title = "باد کردن باتری",
@@ -121,43 +283,124 @@ object ProblemSeedData {
             relatedProblems = emptyList()
         ),
 
-        // ========== DISPLAY ==========
         Problem(
-            id = "problem_touch_issue",
-            title = "تاچ کار نمی‌کند",
-            description = "صفحه نمایش روشن است اما تاچ پاسخ نمی‌دهد.",
-            category = ProblemCategory.DISPLAY,
+            id = "problem_overheat_charging",
+            title = "داغ شدن هنگام شارژ",
+            description = "دستگاه هنگام شارژ بسیار داغ می‌شود.",
+            category = ProblemCategory.CHARGING,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("عدم پاسخ تاچ", "تاچ خودکار", "لمس در جای اشتباه"),
-            commonCauses = listOf("خرابی تاچ IC", "قطع شدن خطوط MIPI", "خرابی دیجیتایزر"),
-            estimatedFixTime = "40-90 دقیقه",
-            estimatedCost = "300-1200 هزار تومان",
-            difficulty = RepairDifficulty.HARD,
-            requiredTools = listOf("هیتر", "میکروسکوپ"),
-            requiredParts = listOf("تاچ IC"),
-            warningNotes = listOf("خطوط MIPI DSI بسیار حساس هستند"),
-            successRate = 70,
+            symptoms = listOf("داغ شدن شدید", "کندی شارژ", "خاموشی خودکار"),
+            commonCauses = listOf("خرابی IC شارژ", "باتری خراب", "مصرف بالای پس‌زمینه"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "150-600 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر", "دوربین حرارتی"),
+            requiredParts = listOf("IC شارژ", "باتری"),
+            warningNotes = listOf("از شارژ مجدد تا رفع مشکل خودداری کنید"),
+            successRate = 80,
             isCommon = true,
-            relatedProblems = emptyList()
+            relatedProblems = listOf("problem_battery_swollen")
         ),
+
         Problem(
-            id = "problem_no_display",
-            title = "صفحه نمایش سیاه است",
-            description = "دستگاه روشن می‌شود اما تصویری نمایش داده نمی‌شود.",
-            category = ProblemCategory.DISPLAY,
-            severity = ProblemSeverity.HIGH,
-            symptoms = listOf("صفحه سیاه", "بدون تصویر", "صدای روشن شدن دارد"),
-            commonCauses = listOf("خرابی LCD", "خرابی Backlight IC", "قطع خطوط MIPI"),
-            estimatedFixTime = "40-90 دقیقه",
-            estimatedCost = "400-1500 هزار تومان",
+            id = "problem_charging_port_damage",
+            title = "خرابی درگاه شارژ",
+            description = "درگاه شارژ شکسته یا شل شده است.",
+            category = ProblemCategory.CHARGING,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("کابل شل است", "شارژ قطع می‌شود", "کانکتور لق شده"),
+            commonCauses = listOf("ضربه به کابل", "استفاده نادرست", "شکستگی پین‌ها"),
+            estimatedFixTime = "30-60 دقیقه",
+            estimatedCost = "150-600 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("هیتر", "قلع‌کشی"),
+            requiredParts = listOf("کانکتور شارژ"),
+            warningNotes = emptyList(),
+            successRate = 90,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_charge")
+        ),
+
+        Problem(
+            id = "problem_wireless_charge_issue",
+            title = "شارژ بی‌سیم کار نمی‌کند",
+            description = "دستگاه روی پد شارژ بی‌سیم قرار می‌گیرد اما شارژ نمی‌شود.",
+            category = ProblemCategory.CHARGING,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("عدم شارژ روی پد", "قطع و وصل شارژ بی‌سیم"),
+            commonCauses = listOf("خرابی کویل", "خرابی IC بی‌سیم", "پد نامناسب"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
             difficulty = RepairDifficulty.HARD,
-            requiredTools = listOf("مولتی‌متر", "میکروسکوپ"),
-            requiredParts = listOf("LCD", "Backlight IC"),
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("کویل شارژ"),
             warningNotes = emptyList(),
             successRate = 75,
+            isCommon = false,
+            relatedProblems = listOf("problem_no_charge")
+        ),
+
+        Problem(
+            id = "problem_battery_fake_percent",
+            title = "درصد باتری نادرست",
+            description = "درصد باتری نمایش داده شده با واقعیت فرق دارد.",
+            category = ProblemCategory.CHARGING,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("پرش درصد", "گیر کردن درصد", "خاموشی قبل از صفر شدن"),
+            commonCauses = listOf("کالیبراسیون نادرست", "باتری فرسوده", "خرابی IC"),
+            estimatedFixTime = "15-30 دقیقه",
+            estimatedCost = "0-300 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = listOf("باتری"),
+            warningNotes = emptyList(),
+            successRate = 85,
             isCommon = true,
+            relatedProblems = listOf("problem_battery_drain")
+        ),
+
+        Problem(
+            id = "problem_no_charge_wireless",
+            title = "شارژ بی‌سیم کند",
+            description = "شارژ بی‌سیم بسیار کند یا ناپایدار است.",
+            category = ProblemCategory.CHARGING,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("شارژ بسیار کند", "قطع مکرر"),
+            commonCauses = listOf("کویل نامناسب", "ضخامت قاب", "پد نامناسب"),
+            estimatedFixTime = "15-30 دقیقه",
+            estimatedCost = "0-200 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = listOf("قاب ضخیم را بردارید"),
+            successRate = 80,
+            isCommon = false,
             relatedProblems = emptyList()
         ),
+
+        Problem(
+            id = "problem_charging_not_detected",
+            title = "دستگاه شارژر را نمی‌شناسد",
+            description = "هیچ واکنشی به اتصال شارژر نشان داده نمی‌شود.",
+            category = ProblemCategory.CHARGING,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("هیچ واکنشی به شارژر", "عدم نمایش آیکون شارژ"),
+            commonCauses = listOf("خرابی کانکتور", "خرابی IC شارژ", "قطع خطوط"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "هیکتر"),
+            requiredParts = listOf("کانکتور", "IC شارژ"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_charge")
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  DISPLAY (نمایشگر) - 12 مشکل
+        // ═══════════════════════════════════════════════════════
+
         Problem(
             id = "problem_lcd_broken",
             title = "شکستگی LCD",
@@ -177,7 +420,219 @@ object ProblemSeedData {
             relatedProblems = emptyList()
         ),
 
-        // ========== NETWORK ==========
+        Problem(
+            id = "problem_touch_issue",
+            title = "تاچ کار نمی‌کند",
+            description = "صفحه نمایش روشن است اما تاچ پاسخ نمی‌دهد.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("عدم پاسخ تاچ", "تاچ خودکار", "لمس در جای اشتباه"),
+            commonCauses = listOf("خرابی تاچ IC", "قطع خطوط MIPI", "خرابی دیجیتایزر"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "300-1200 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("هیتر", "میکروسکوپ"),
+            requiredParts = listOf("تاچ IC"),
+            warningNotes = listOf("خطوط MIPI DSI بسیار حساس هستند"),
+            successRate = 70,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_ghost_touch",
+            title = "تاچ خودکار (Ghost Touch)",
+            description = "صفحه بدون دخالت کاربر عکس‌العمل نشان می‌دهد.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("تاچ خودکار", "باز شدن ناخواسته اپ", "حرکت خودکار"),
+            commonCauses = listOf("خرابی تاچ IC", "نویز الکتریکی", "شارژر نامناسب"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-1000 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("تاچ IC"),
+            warningNotes = listOf("ابتدا با شارژر اصلی و بدون شارژر تست کنید"),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_touch_issue")
+        ),
+
+        Problem(
+            id = "problem_touch_partial",
+            title = "بخشی از تاچ کار نمی‌کند",
+            description = "بخشی از صفحه تاچ (مثلاً بالای صفحه) پاسخ نمی‌دهد.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("بخشی از صفحه بی‌پاسخ", "نوار بی‌پاسخ"),
+            commonCauses = listOf("خرابی دیجیتایزر", "قطع خطوط", "ضربه"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "300-1200 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("هیتر", "میکروسکوپ"),
+            requiredParts = listOf("دیجیتایزر"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_touch_issue")
+        ),
+
+        Problem(
+            id = "problem_display_lines",
+            title = "خطوط روی صفحه",
+            description = "خطوط عمودی یا افقی روی صفحه نمایش ظاهر می‌شود.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("خطوط عمودی", "خطوط افقی", "خط رنگی"),
+            commonCauses = listOf("خرابی LCD", "قطع خطوط MIPI", "خرابی IC"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "300-1500 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "میکروسکوپ", "هیتر"),
+            requiredParts = listOf("LCD", "IC"),
+            warningNotes = emptyList(),
+            successRate = 70,
+            isCommon = true,
+            relatedProblems = listOf("problem_lcd_broken")
+        ),
+
+        Problem(
+            id = "problem_display_flicker",
+            title = "پرش تصویر",
+            description = "تصویر صفحه نمایش پرش دارد یا مدام روشن و خاموش می‌شود.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("پرش تصویر", "روشن و خاموش شدن", "کم شدن نور"),
+            commonCauses = listOf("خرابی Backlight", "خرابی IC", "کابل شل"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "300-1200 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("Backlight IC"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_display")
+        ),
+
+        Problem(
+            id = "problem_display_white",
+            title = "صفحه سفید",
+            description = "صفحه نمایش کاملاً سفید است.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("صفحه سفید", "روشنایی زیاد"),
+            commonCauses = listOf("خرابی LCD", "خرابی IC تصویر", "قطع خطوط"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "400-1500 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("LCD", "IC"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = false,
+            relatedProblems = listOf("problem_lcd_broken")
+        ),
+
+        Problem(
+            id = "problem_dead_pixels",
+            title = "پیکسل‌های سوخته",
+            description = "نقاط سیاه یا رنگی روی صفحه دیده می‌شود.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("نقاط سیاه", "نقاط رنگی", "پیکسل سوخته"),
+            commonCauses = listOf("خرابی پیکسل", "فشار فیزیکی", "قدمت دستگاه"),
+            estimatedFixTime = "30-60 دقیقه",
+            estimatedCost = "500-2000 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("هیتر", "ابزار باز کردن"),
+            requiredParts = listOf("LCD جدید"),
+            warningNotes = emptyList(),
+            successRate = 90,
+            isCommon = false,
+            relatedProblems = listOf("problem_lcd_broken")
+        ),
+
+        Problem(
+            id = "problem_low_brightness",
+            title = "روشنایی صفحه کم است",
+            description = "حتی در حداکثر روشنایی، صفحه خیلی کم‌نور است.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("روشنایی کم", "محو دیده شدن"),
+            commonCauses = listOf("خرابی Backlight", "پیری LCD", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "300-1000 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("Backlight"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_display_burn_in",
+            title = "سایه تصویر (Burn-in)",
+            description = "سایه‌ای از تصویر قبلی روی صفحه باقی می‌ماند.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("سایه تصویر", "محو شدن"),
+            commonCauses = listOf("پیری OLED", "روشنایی زیاد طولانی"),
+            estimatedFixTime = "30-60 دقیقه",
+            estimatedCost = "600-2500 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("هیتر", "ابزار باز کردن"),
+            requiredParts = listOf("صفحه OLED"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_touch_delay",
+            title = "تاخیر در تاچ",
+            description = "تاچ با تاخیر پاسخ می‌دهد.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("تاخیر در لمس", "کندی پاسخ"),
+            commonCauses = listOf("مشکل نرم‌افزاری", "خرابی تاچ IC", "کندی سیستم"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "0-500 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = listOf("problem_touch_issue")
+        ),
+
+        Problem(
+            id = "problem_screen_protector_lifted",
+            title = "بلند شدن محافظ صفحه",
+            description = "گلس یا محافظ صفحه از گوشه بلند شده است.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("بلند شدن گلس", "ورود گرد و غبار"),
+            commonCauses = listOf("کیفیت پایین گلس", "تغییر دما", "فشار"),
+            estimatedFixTime = "10-20 دقیقه",
+            estimatedCost = "50-200 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = listOf("گلس جدید"),
+            warningNotes = emptyList(),
+            successRate = 95,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  NETWORK (شبکه) - 10 مشکل
+        // ═══════════════════════════════════════════════════════
+
         Problem(
             id = "problem_no_signal",
             title = "آنتن ندارد",
@@ -196,6 +651,7 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = listOf("problem_no_imei")
         ),
+
         Problem(
             id = "problem_no_imei",
             title = "IMEI صفر یا نامعتبر",
@@ -214,6 +670,7 @@ object ProblemSeedData {
             isCommon = false,
             relatedProblems = listOf("problem_no_signal")
         ),
+
         Problem(
             id = "problem_wifi_issue",
             title = "وای‌فای کار نمی‌کند",
@@ -221,7 +678,7 @@ object ProblemSeedData {
             category = ProblemCategory.NETWORK,
             severity = ProblemSeverity.MEDIUM,
             symptoms = listOf("WiFi خاموش خودکار", "شبکه‌ای پیدا نمی‌کند", "قطع مکرر"),
-            commonCauses = listOf("خرابی IC WiFi", "آنریتینگ آنتن", "مشکل نرم‌افزاری"),
+            commonCauses = listOf("خرابی IC WiFi", "آنتن قطع", "مشکل نرم‌افزاری"),
             estimatedFixTime = "30-90 دقیقه",
             estimatedCost = "300-1200 هزار تومان",
             difficulty = RepairDifficulty.HARD,
@@ -232,6 +689,7 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = emptyList()
         ),
+
         Problem(
             id = "problem_bluetooth_issue",
             title = "بلوتوث کار نمی‌کند",
@@ -251,7 +709,124 @@ object ProblemSeedData {
             relatedProblems = listOf("problem_wifi_issue")
         ),
 
-        // ========== AUDIO ==========
+        Problem(
+            id = "problem_no_sim_detected",
+            title = "SIM شناسایی نمی‌شود",
+            description = "دستگاه هیچ SIM کارتی را تشخیص نمی‌دهد.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("SIM شناسایی نمی‌شود", "پیام No SIM"),
+            commonCauses = listOf("خرابی SIM Reader", "قطع خطوط", "خرابی IC"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("SIM Reader"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_signal")
+        ),
+
+        Problem(
+            id = "problem_network_slow",
+            title = "اینترنت کند",
+            description = "سرعت اینترنت موبایل بسیار کند است.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("اینترنت کند", "قطع مکرر"),
+            commonCauses = listOf("مشکل اپراتور", "خرابی آنتن", "تنظیمات APN"),
+            estimatedFixTime = "15-60 دقیقه",
+            estimatedCost = "0-500 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_signal")
+        ),
+
+        Problem(
+            id = "problem_gps_issue",
+            title = "GPS کار نمی‌کند",
+            description = "دستگاه موقعیت مکانی را تشخیص نمی‌دهد.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("GPS آفلاین", "موقعیت یابی دیر"),
+            commonCauses = listOf("خرابی ماژول GPS", "قطع آنتن", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("ماژول GPS"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_nfc_issue",
+            title = "NFC کار نمی‌کند",
+            description = "دستگاه به تگ‌های NFC پاسخ نمی‌دهد.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("NFC خاموش خودکار", "عدم پاسخ به تگ"),
+            commonCauses = listOf("خرابی آنتن NFC", "خرابی IC", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-700 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("آنتن NFC"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_dual_sim_issue",
+            title = "یکی از سیم‌کارت‌ها کار نمی‌کند",
+            description = "دستگاه دو سیم‌کارت دارد اما یکی از آن‌ها شناسایی نمی‌شود.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("عدم شناسایی سیم ۲", "قطع مکرر"),
+            commonCauses = listOf("خرابی اسلات", "قطع خطوط", "مشکل SIM"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("اسلات SIM"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = false,
+            relatedProblems = listOf("problem_no_sim_detected")
+        ),
+
+        Problem(
+            id = "problem_hotspot_issue",
+            title = "هات‌اسپات کار نمی‌کند",
+            description = "قابلیت هات‌اسپات روشن می‌شود اما دستگاه دیگر وصل نمی‌شود.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("هات‌اسپات روشن نمی‌شود", "قطع مکرر"),
+            commonCauses = listOf("مشکل نرم‌افزاری", "خرابی IC"),
+            estimatedFixTime = "15-60 دقیقه",
+            estimatedCost = "0-400 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = false,
+            relatedProblems = listOf("problem_wifi_issue")
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  AUDIO (صدا) - 8 مشکل
+        // ═══════════════════════════════════════════════════════
+
         Problem(
             id = "problem_no_sound",
             title = "صدا پخش نمی‌شود",
@@ -259,7 +834,7 @@ object ProblemSeedData {
             category = ProblemCategory.AUDIO,
             severity = ProblemSeverity.MEDIUM,
             symptoms = listOf("بی‌صدا شدن بلندگو", "صدای خش‌دار", "فقط با هندزفری صدا دارد"),
-            commonCauses = listOf("خرابی بلندگو", "خرابی IC صدا", "قطع خطوط بلندگو"),
+            commonCauses = listOf("خرابی بلندگو", "خرابی IC صدا", "قطع خطوط"),
             estimatedFixTime = "20-60 دقیقه",
             estimatedCost = "100-500 هزار تومان",
             difficulty = RepairDifficulty.EASY,
@@ -270,13 +845,14 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = emptyList()
         ),
+
         Problem(
             id = "problem_mic_issue",
             title = "میکروفون کار نمی‌کند",
             description = "صدای کاربر در تماس شنیده نمی‌شود.",
             category = ProblemCategory.AUDIO,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("صدای من شنیده نمی‌شود", "ضبط صدا کار نمی‌کند", "دستور صوتی کار نمی‌کند"),
+            symptoms = listOf("صدای من شنیده نمی‌شود", "ضبط صدا کار نمی‌کند"),
             commonCauses = listOf("خرابی میکروفون", "خرابی IC صدا", "خرابی نرم‌افزار"),
             estimatedFixTime = "20-60 دقیقه",
             estimatedCost = "100-400 هزار تومان",
@@ -288,6 +864,7 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = emptyList()
         ),
+
         Problem(
             id = "problem_speaker_noise",
             title = "صدای خش‌دار از بلندگو",
@@ -307,25 +884,223 @@ object ProblemSeedData {
             relatedProblems = listOf("problem_no_sound")
         ),
 
-        // ========== SOFTWARE ==========
         Problem(
-            id = "problem_bootloop",
-            title = "بوت‌لوپ",
-            description = "دستگاه به طور مداوم در لوگوی اولیه راه‌اندازی مجدد می‌شود.",
-            category = ProblemCategory.SOFTWARE,
-            severity = ProblemSeverity.HIGH,
-            symptoms = listOf("ری‌استارت مداوم", "ورود به Recovery", "لوگو گیر کردن"),
-            commonCauses = listOf("خرابی نرم‌افزار", "خرابی Storage", "ناسازگاری رام"),
-            estimatedFixTime = "30-90 دقیقه",
-            estimatedCost = "150-600 هزار تومان",
+            id = "problem_earpiece_no_sound",
+            title = "صدای مکالمه شنیده نمی‌شود",
+            description = "در حین تماس، صدای مخاطب از گوشی شنیده نمی‌شود.",
+            category = ProblemCategory.AUDIO,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("صدای مخاطب شنیده نمی‌شود", "صدای قطع و وصل"),
+            commonCauses = listOf("خرابی اسپیکر مکالمه", "قطع کانکتور", "خرابی IC"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "100-500 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("اسپیکر مکالمه"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_headphone_jack",
+            title = "جک هدفون کار نمی‌کند",
+            description = "هدفون متصل می‌شود اما صدا از آن پخش نمی‌شود.",
+            category = ProblemCategory.AUDIO,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("هدفون شناسایی نمی‌شود", "صدای خش‌دار"),
+            commonCauses = listOf("خرابی جک", "قطع خطوط", "گرد و غبار"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "100-400 هزار تومان",
             difficulty = RepairDifficulty.MEDIUM,
-            requiredTools = listOf("کامپیوتر", "کابل USB"),
-            requiredParts = emptyList(),
-            warningNotes = listOf("قبل از فلش، بکاپ NVRAM بگیرید"),
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("جک هدفون"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_ringtone_low",
+            title = "صدای زنگ ضعیف است",
+            description = "بلندگو صدای بسیار ضعیفی تولید می‌کند.",
+            category = ProblemCategory.AUDIO,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("صدای ضعیف", "خش‌دار"),
+            commonCauses = listOf("خرابی بلندگو", "گرفتگی", "خرابی IC"),
+            estimatedFixTime = "15-45 دقیقه",
+            estimatedCost = "100-400 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("ابزار باز کردن"),
+            requiredParts = listOf("بلندگو"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_sound")
+        ),
+
+        Problem(
+            id = "problem_no_audio_call",
+            title = "در تماس هیچ صدایی نیست",
+            description = "در تماس، نه صدای مخاطب و نه میکروفون کار می‌کند.",
+            category = ProblemCategory.AUDIO,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("هیچ صدایی در تماس", "میکروفون قطع"),
+            commonCauses = listOf("خرابی IC صدا", "مشکل نرم‌افزاری", "قطع خطوط"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "میکروسکوپ"),
+            requiredParts = listOf("IC صدا"),
+            warningNotes = emptyList(),
+            successRate = 75,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_loudspeaker_crackling",
+            title = "صدای ترق‌ترق در بلندگو",
+            description = "بلندگو هنگام پخش صدا، ترق‌ترق یا خش دارد.",
+            category = ProblemCategory.AUDIO,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("ترق‌ترق", "خش‌دار"),
+            commonCauses = listOf("خرابی بلندگو", "آمپلی‌فایر", "نرم‌افزار"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "100-500 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("بلندگو"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = false,
+            relatedProblems = listOf("problem_no_sound")
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  CAMERA (دوربین) - 6 مشکل
+        // ═══════════════════════════════════════════════════════
+
+        Problem(
+            id = "problem_camera_issue",
+            title = "دوربین کار نمی‌کند",
+            description = "اپلیکیشن دوربین باز نمی‌شود یا خطا می‌دهد.",
+            category = ProblemCategory.CAMERA,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("دوربین باز نمی‌شود", "صفحه سیاه", "پیام خطا"),
+            commonCauses = listOf("خرابی ماژول دوربین", "قطع کانکتور", "خرابی نرم‌افزار"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-1000 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("ابزار باز کردن"),
+            requiredParts = listOf("ماژول دوربین"),
+            warningNotes = emptyList(),
             successRate = 80,
             isCommon = true,
-            relatedProblems = listOf("problem_no_power")
+            relatedProblems = emptyList()
         ),
+
+        Problem(
+            id = "problem_camera_blurry",
+            title = "تصویر دوربین تار است",
+            description = "تصاویر گرفته شده تار یا بدون فوکوس هستند.",
+            category = ProblemCategory.CAMERA,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("تصویر تار", "عدم فوکوس"),
+            commonCauses = listOf("خرابی OIS", "لنز کثیف", "خرابی ماژول"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "100-800 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("ابزار باز کردن"),
+            requiredParts = listOf("ماژول دوربین"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = listOf("problem_camera_issue")
+        ),
+
+        Problem(
+            id = "problem_camera_black",
+            title = "دوربین صفحه سیاه نشان می‌دهد",
+            description = "دوربین باز می‌شود اما تصویر سیاه است.",
+            category = ProblemCategory.CAMERA,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("صفحه سیاه", "دوربین باز می‌شود"),
+            commonCauses = listOf("خرابی سنسور", "قطع کانکتور", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-1000 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("ابزار باز کردن"),
+            requiredParts = listOf("ماژول دوربین"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = listOf("problem_camera_issue")
+        ),
+
+        Problem(
+            id = "problem_front_camera_issue",
+            title = "دوربین سلفی کار نمی‌کند",
+            description = "دوربین جلو باز نمی‌شود یا تصویر سیاه است.",
+            category = ProblemCategory.CAMERA,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("دوربین سلفی سیاه", "خطا"),
+            commonCauses = listOf("خرابی ماژول جلو", "قطع کانکتور", "نرم‌افزار"),
+            estimatedFixTime = "30-60 دقیقه",
+            estimatedCost = "200-700 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("ابزار باز کردن"),
+            requiredParts = listOf("ماژول دوربین جلو"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = listOf("problem_camera_issue")
+        ),
+
+        Problem(
+            id = "problem_flash_not_working",
+            title = "فلاش کار نمی‌کند",
+            description = "فلاش دوربین در هیچ حالتی روشن نمی‌شود.",
+            category = ProblemCategory.CAMERA,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("فلاش روشن نمی‌شود", "فلاش ضعیف"),
+            commonCauses = listOf("خرابی LED فلاش", "خرابی IC", "قطع خطوط"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "100-400 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("مولتی‌متر", "هیتر"),
+            requiredParts = listOf("LED فلاش"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_camera_lens_scratched",
+            title = "خط افتادگی روی لنز",
+            description = "شیشه روی لنز دوربین خط افتاده یا شکسته است.",
+            category = ProblemCategory.CAMERA,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("خط روی لنز", "تصویر تار"),
+            commonCauses = listOf("ضربه", "خط افتادگی"),
+            estimatedFixTime = "20-45 دقیقه",
+            estimatedCost = "100-500 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("ابزار باز کردن"),
+            requiredParts = listOf("شیشه لنز"),
+            warningNotes = emptyList(),
+            successRate = 95,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  SOFTWARE (نرم‌افزار) - 6 مشکل
+        // ═══════════════════════════════════════════════════════
+
         Problem(
             id = "problem_slow_system",
             title = "کندی سیستم",
@@ -344,13 +1119,14 @@ object ProblemSeedData {
             isCommon = true,
             relatedProblems = listOf("problem_bootloop")
         ),
+
         Problem(
             id = "problem_app_crash",
             title = "کرش کردن اپلیکیشن‌ها",
             description = "بسیاری از اپلیکیشن‌ها هنگام باز شدن بسته می‌شوند.",
             category = ProblemCategory.SOFTWARE,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("کرش مکرر", "بسته شدن خودکار اپ", "پیام Unfortunately"),
+            symptoms = listOf("کرش مکرر", "بسته شدن خودکار اپ"),
             commonCauses = listOf("خرابی نرم‌افزار", "ناسازگاری نسخه", "خرابی Data"),
             estimatedFixTime = "20-60 دقیقه",
             estimatedCost = "0-250 هزار تومان",
@@ -363,34 +1139,192 @@ object ProblemSeedData {
             relatedProblems = listOf("problem_bootloop")
         ),
 
-        // ========== CAMERA ==========
         Problem(
-            id = "problem_camera_issue",
-            title = "دوربین کار نمی‌کند",
-            description = "اپلیکیشن دوربین باز نمی‌شود یا خطا می‌دهد.",
-            category = ProblemCategory.CAMERA,
-            severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("دوربین باز نمی‌شود", "صفحه سیاه", "پیام خطای دوربین"),
-            commonCauses = listOf("خرابی ماژول دوربین", "قطع کانکتور", "خرابی نرم‌افزار"),
+            id = "problem_virus_malware",
+            title = "ویروس یا بدافزار",
+            description = "دستگاه رفتار غیرعادی دارد، تبلیغات زیاد نشان می‌دهد یا باتری سریع خالی می‌شود.",
+            category = ProblemCategory.SOFTWARE,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("تبلیغات مزاحم", "کندی شدید", "مصرف بالای باتری"),
+            commonCauses = listOf("نصب اپ مخرب", "دانلود از منابع ناشناس"),
             estimatedFixTime = "30-90 دقیقه",
-            estimatedCost = "200-1000 هزار تومان",
+            estimatedCost = "0-300 هزار تومان",
             difficulty = RepairDifficulty.MEDIUM,
-            requiredTools = listOf("ابزار باز کردن"),
-            requiredParts = listOf("ماژول دوربین"),
+            requiredTools = listOf("کامپیوتر", "آنتی‌ویروس"),
+            requiredParts = emptyList(),
+            warningNotes = listOf("ممکن است نیاز به فلش کامل باشد"),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_play_store_error",
+            title = "خطای Google Play",
+            description = "Google Play باز نمی‌شود یا خطا می‌دهد.",
+            category = ProblemCategory.SOFTWARE,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("خطای Play Store", "عدم دانلود اپ"),
+            commonCauses = listOf("خرابی Cache", "مشکل حساب Google", "نرم‌افزار"),
+            estimatedFixTime = "15-45 دقیقه",
+            estimatedCost = "0-200 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = emptyList(),
+            successRate = 90,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_storage_full",
+            title = "حافظه پر شده",
+            description = "حافظه داخلی پر شده و نمی‌توان اپ جدید نصب کرد.",
+            category = ProblemCategory.SOFTWARE,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("حافظه پر", "عدم نصب اپ"),
+            commonCauses = listOf("فایل‌های اضافی", "کش اپ‌ها", "عکس/فیلم زیاد"),
+            estimatedFixTime = "15-45 دقیقه",
+            estimatedCost = "0-100 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = listOf("قبل از پاک کردن، بکاپ بگیرید"),
+            successRate = 95,
+            isCommon = true,
+            relatedProblems = listOf("problem_slow_system")
+        ),
+
+        Problem(
+            id = "problem_factory_reset_needed",
+            title = "نیاز به ریست فکتوری",
+            description = "دستگاه پس از تنظیمات اشتباه یا نصب اپ مخرب، نیاز به بازنشانی کامل دارد.",
+            category = ProblemCategory.SOFTWARE,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("مشکلات متعدد", "کندی شدید", "رفتار غیرعادی"),
+            commonCauses = listOf("نصب اپ مخرب", "تنظیمات اشتباه", "خرابی سیستم"),
+            estimatedFixTime = "30-60 دقیقه",
+            estimatedCost = "0-200 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = emptyList(),
+            requiredParts = emptyList(),
+            warningNotes = listOf("تمام داده‌ها پاک می‌شود - ابتدا بکاپ بگیرید"),
+            successRate = 90,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  SENSOR (سنسور) - 4 مشکل
+        // ═══════════════════════════════════════════════════════
+
+        Problem(
+            id = "problem_fingerprint_issue",
+            title = "اثر انگشت کار نمی‌کند",
+            description = "سنسور اثر انگشت اثر را تشخیص نمی‌دهد.",
+            category = ProblemCategory.SENSOR,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("عدم تشخیص اثر انگشت", "خطای سنسور"),
+            commonCauses = listOf("خرابی سنسور", "گرد و غبار", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("ابزار باز کردن", "هیتر"),
+            requiredParts = listOf("سنسور اثر انگشت"),
             warningNotes = emptyList(),
             successRate = 80,
             isCommon = true,
             relatedProblems = emptyList()
         ),
 
-        // ========== CONNECTIVITY ==========
+        Problem(
+            id = "problem_proximity_sensor",
+            title = "سنسور مجاورت کار نمی‌کند",
+            description = "در تماس، صفحه هنگام نزدیک شدن به گوش خاموش نمی‌شود.",
+            category = ProblemCategory.SENSOR,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("صفحه در تماس خاموش نمی‌شود", "قطع تماس"),
+            commonCauses = listOf("خرابی سنسور", "گرد و غبار", "گلس نامناسب"),
+            estimatedFixTime = "20-60 دقیقه",
+            estimatedCost = "100-400 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("ابزار باز کردن", "هیتر"),
+            requiredParts = listOf("سنسور مجاورت"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_gyroscope_issue",
+            title = "ژیروسکوپ کار نمی‌کند",
+            description = "چرخش خودکار صفحه و بازی‌ها کار نمی‌کند.",
+            category = ProblemCategory.SENSOR,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("عدم چرخش خودکار", "کالیبراسیون نادرست"),
+            commonCauses = listOf("خرابی سنسور", "مشکل نرم‌افزاری"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("هیتر"),
+            requiredParts = listOf("ژیروسکوپ"),
+            warningNotes = emptyList(),
+            successRate = 80,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        Problem(
+            id = "problem_face_unlock_issue",
+            title = "قفل چهره کار نمی‌کند",
+            description = "قابلیت تشخیص چهره (Face Unlock) کار نمی‌کند.",
+            category = ProblemCategory.SENSOR,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("عدم تشخیص چهره", "خطا"),
+            commonCauses = listOf("خرابی IR سنسور", "خرابی دوربین جلو", "نرم‌افزار"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "300-1200 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("هیتر", "میکروسکوپ"),
+            requiredParts = listOf("IR سنسور"),
+            warningNotes = emptyList(),
+            successRate = 70,
+            isCommon = false,
+            relatedProblems = emptyList()
+        ),
+
+        // ═══════════════════════════════════════════════════════
+        //  HARDWARE / WATER (سخت‌افزار و آب‌خوردگی) - 4 مشکل
+        // ═══════════════════════════════════════════════════════
+
+        Problem(
+            id = "problem_water_damage",
+            title = "آب‌خوردگی",
+            description = "دستگاه در تماس با آب قرار گرفته و کار نمی‌کند.",
+            category = ProblemCategory.WATER,
+            severity = ProblemSeverity.CRITICAL,
+            symptoms = listOf("خاموش شدن پس از آب", "خوردگی روی برد", "داغ شدن"),
+            commonCauses = listOf("نفوذ آب", "خوردگی قطعات", "کوتاهی داخلی"),
+            estimatedFixTime = "60-180 دقیقه",
+            estimatedCost = "500-2500 هزار تومان",
+            difficulty = RepairDifficulty.EXPERT,
+            requiredTools = listOf("اولتراسونیک", "میکروسکوپ", "هیتر"),
+            requiredParts = listOf("IC معیوب"),
+            warningNotes = listOf("دستگاه آب‌خورده را هرگز روشن نکنید"),
+            successRate = 50,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_power")
+        ),
+
         Problem(
             id = "problem_usb_issue",
             title = "USB شناسایی نمی‌شود",
             description = "دستگاه با کابل USB به کامپیوتر وصل نمی‌شود.",
-            category = ProblemCategory.CONNECTIVITY,
+            category = ProblemCategory.HARDWARE,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("USB شناسایی نمی‌شود", "فقط شارژ می‌شود", "قطع و وصل USB"),
+            symptoms = listOf("USB شناسایی نمی‌شود", "فقط شارژ می‌شود"),
             commonCauses = listOf("خرابی کانکتور", "قطع خطوط D+/D-", "خرابی IC USB"),
             estimatedFixTime = "30-90 دقیقه",
             estimatedCost = "200-800 هزار تومان",
@@ -403,42 +1337,42 @@ object ProblemSeedData {
             relatedProblems = listOf("problem_no_charge")
         ),
 
-        // ========== HARDWARE ==========
         Problem(
-            id = "problem_water_damage",
-            title = "آب‌خوردگی",
-            description = "دستگاه در تماس با آب قرار گرفته و کار نمی‌کند.",
+            id = "problem_back_cover_damage",
+            title = "شکستگی درب پشت",
+            description = "درب پشت دستگاه شکسته یا خط افتاده است.",
             category = ProblemCategory.HARDWARE,
-            severity = ProblemSeverity.CRITICAL,
-            symptoms = listOf("خاموش شدن پس از آب", "خوردگی روی برد", "داغ شدن"),
-            commonCauses = listOf("نفوذ آب", "خوردگی قطعات", "کوتاهی داخلی"),
-            estimatedFixTime = "60-180 دقیقه",
-            estimatedCost = "500-2500 هزار تومان",
-            difficulty = RepairDifficulty.EXPERT,
-            requiredTools = listOf("اولتراسونیک", "میکروسکوپ", "هیتر"),
-            requiredParts = emptyList(),
-            warningNotes = listOf("دستگاه آب‌خورده را هرگز روشن نکنید"),
-            successRate = 50,
+            severity = ProblemSeverity.LOW,
+            symptoms = listOf("شکستگی درب پشت", "خط افتادگی"),
+            commonCauses = listOf("افتادن", "ضربه فیزیکی"),
+            estimatedFixTime = "20-45 دقیقه",
+            estimatedCost = "150-600 هزار تومان",
+            difficulty = RepairDifficulty.EASY,
+            requiredTools = listOf("ابزار باز کردن", "هیتر"),
+            requiredParts = listOf("درب پشت جدید"),
+            warningNotes = emptyList(),
+            successRate = 95,
             isCommon = true,
-            relatedProblems = listOf("problem_no_power")
+            relatedProblems = emptyList()
         ),
+
         Problem(
-            id = "problem_charging_port_damage",
-            title = "خرابی درگاه شارژ",
-            description = "درگاه شارژ شکسته یا شل شده است.",
+            id = "problem_frame_bent",
+            title = "خم شدن فریم",
+            description = "فریم دستگاه در اثر فشار یا ضربه خم شده است.",
             category = ProblemCategory.HARDWARE,
             severity = ProblemSeverity.MEDIUM,
-            symptoms = listOf("کابل شل است", "شارژ قطع می‌شود", "کانکتور لق شده"),
-            commonCauses = listOf("ضربه به کابل", "استفاده نادرست", "شکستگی پین‌ها"),
-            estimatedFixTime = "30-60 دقیقه",
-            estimatedCost = "150-600 هزار تومان",
-            difficulty = RepairDifficulty.MEDIUM,
-            requiredTools = listOf("هیتر", "قلع‌کشی"),
-            requiredParts = listOf("کانکتور شارژ"),
+            symptoms = listOf("خم شدن بدنه", "شکاف بین قطعات"),
+            commonCauses = listOf("فشار زیاد", "افتادن", "کیفیت پایین"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "300-1000 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("ابزار باز کردن", "پرس"),
+            requiredParts = listOf("فریم جدید"),
             warningNotes = emptyList(),
-            successRate = 90,
-            isCommon = true,
-            relatedProblems = listOf("problem_no_charge")
+            successRate = 70,
+            isCommon = false,
+            relatedProblems = listOf("problem_back_cover_damage")
         )
     )
 }
