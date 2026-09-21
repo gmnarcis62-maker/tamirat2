@@ -23,16 +23,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import red.line.tamirkar.R
 import kotlin.math.*
 
 @Composable
@@ -67,15 +64,6 @@ fun RotaryKnobScreen(
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Background image (workshop feel)
-        Image(
-            painter = painterResource(id = R.drawable.rotary_knob_bg),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            alpha = 0.35f
-        )
-
         // Glassmorphism overlay
         Box(
             modifier = Modifier

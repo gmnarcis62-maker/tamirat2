@@ -1,103 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
 
     <!-- 1. سایه بیرونی زیر Knob -->
-    <item>
-        <shape android:shape="oval">
-            <solid android:color="#33000000" />
-            <size android:width="200dp" android:height="200dp" />
-        </shape>
-    </item>
+    <path
+        android:pathData="M100,0 a100,100 0 1,0 0.01,0 z"
+        android:fillColor="#33000000" />
 
-    <!-- 2. حلقه بیرونی فلزی (با گرادیان چرخشی) -->
-    <item
-        android:left="4dp"
-        android:top="2dp"
-        android:right="4dp"
-        android:bottom="6dp">
-        <shape android:shape="oval">
+    <!-- 2. حلقه بیرونی فلزی (گرادیان چرخشی) -->
+    <path
+        android:pathData="M100,4 a96,96 0 1,0 0.01,0 z"
+        android:strokeColor="#2A2A2A"
+        android:strokeWidth="1">
+        <aapt:attr name="android:fillColor">
             <gradient
                 android:type="sweep"
                 android:startColor="#F5F5F5"
                 android:centerColor="#9E9E9E"
                 android:endColor="#424242" />
-            <stroke android:width="1dp" android:color="#2A2A2A" />
-        </shape>
-    </item>
+        </aapt:attr>
+    </path>
 
     <!-- 3. حلقه میانی تیره (بدنه اصلی Knob) -->
-    <item
-        android:left="20dp"
-        android:top="18dp"
-        android:right="20dp"
-        android:bottom="22dp">
-        <shape android:shape="oval">
-            <gradient
-                android:type="radial"
-                android:gradientRadius="100"
-                android:startColor="#4A4A4A"
-                android:endColor="#1A1A1A" />
-            <stroke android:width="2dp" android:color="#0A0A0A" />
-        </shape>
-    </item>
-
-    <!-- 4. حلقه رنگی (قرمز - نشانه برند) -->
-    <item
-        android:left="40dp"
-        android:top="38dp"
-        android:right="40dp"
-        android:bottom="42dp">
-        <shape android:shape="oval">
+    <path
+        android:pathData="M100,20 a80,80 0 1,0 0.01,0 z"
+        android:strokeColor="#0A0A0A"
+        android:strokeWidth="2">
+        <aapt:attr name="android:fillColor">
             <gradient
                 android:type="radial"
                 android:gradientRadius="80"
-                android:startColor="#EF5350"
-                android:endColor="#B71C1C" />
-            <stroke android:width="2dp" android:color="#7F0000" />
-        </shape>
-    </item>
+                android:centerX="100"
+                android:centerY="100"
+                android:startColor="#4A4A4A"
+                android:endColor="#1A1A1A" />
+        </aapt:attr>
+    </path>
 
-    <!-- 5. مرکز روشن با درخشش -->
-    <item
-        android:left="70dp"
-        android:top="68dp"
-        android:right="70dp"
-        android:bottom="72dp">
-        <shape android:shape="oval">
+    <!-- 4. حلقه رنگی (قرمز - نشانه برند) -->
+    <path
+        android:pathData="M100,40 a60,60 0 1,0 0.01,0 z"
+        android:strokeColor="#7F0000"
+        android:strokeWidth="2">
+        <aapt:attr name="android:fillColor">
             <gradient
                 android:type="radial"
-                android:gradientRadius="40"
+                android:gradientRadius="60"
+                android:centerX="100"
+                android:centerY="100"
+                android:startColor="#EF5350"
+                android:endColor="#B71C1C" />
+        </aapt:attr>
+    </path>
+
+    <!-- 5. مرکز روشن با درخشش -->
+    <path
+        android:pathData="M100,70 a30,30 0 1,0 0.01,0 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="30"
+                android:centerX="100"
+                android:centerY="100"
                 android:startColor="#FFFFFF"
                 android:centerColor="#FFCDD2"
                 android:endColor="#E53935" />
-        </shape>
-    </item>
+        </aapt:attr>
+    </path>
 
     <!-- 6. بازتاب/براقیت بالای Knob (gloss) -->
-    <item
-        android:left="30dp"
-        android:top="22dp"
-        android:right="60dp"
-        android:bottom="130dp">
-        <shape android:shape="oval">
+    <!-- در layer-list: left=30dp, top=22dp, right=60dp, bottom=130dp -->
+    <!-- یعنی بیضی با مرکز (85, 46) و شعاع افقی 55 و عمودی 24 -->
+    <path
+        android:pathData="M30,46 A55,24 0 1,0 140,46 A55,24 0 1,0 30,46 Z">
+        <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"
                 android:angle="90"
                 android:startColor="#66FFFFFF"
                 android:endColor="#00FFFFFF" />
-        </shape>
-    </item>
+        </aapt:attr>
+    </path>
 
     <!-- 7. نشانگر جهت چرخش (خط سفید در بالای Knob) -->
-    <item
-        android:left="97dp"
-        android:top="26dp"
-        android:right="97dp"
-        android:bottom="158dp">
-        <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF" />
-            <corners android:radius="2dp" />
-        </shape>
-    </item>
+    <!-- مستطیل از (97,26) تا (103,42) با گوشه‌های گرد -->
+    <path
+        android:pathData="M99,26 L101,26 A2,2 0 0,1 103,28 L103,40 A2,2 0 0,1 101,42 L99,42 A2,2 0 0,1 97,40 L97,28 A2,2 0 0,1 99,26 Z"
+        android:fillColor="#FFFFFF" />
 
-</layer-list>
+</vector>
