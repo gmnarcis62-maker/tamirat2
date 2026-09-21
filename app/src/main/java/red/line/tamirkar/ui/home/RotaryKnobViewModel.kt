@@ -1,9 +1,15 @@
 package red.line.tamirkar.ui.home
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import red.line.tamirkar.domain.model.RotaryMenuItem
 import javax.inject.Inject
@@ -21,12 +27,70 @@ class RotaryKnobViewModel @Inject constructor() : ViewModel() {
     val isDragging: StateFlow<Boolean> = _isDragging.asStateFlow()
 
     val menuItems = listOf(
-        RotaryMenuItem("troubleshoot", "عیب‌یابی", null, 270f, androidx.compose.ui.graphics.Color(0xFF00E5FF), "diagnosis"),
-        RotaryMenuItem("schematics", "نقشهخوانی", null, 330f, androidx.compose.ui.graphics.Color(0xFFFFD740), "schematics"),
-        RotaryMenuItem("power_diag", "جریان‌کشی", null, 30f, androidx.compose.ui.graphics.Color(0xFF69F0AE), "power_diagnostics"),
-        RotaryMenuItem("component_test", "تست قطعات", null, 90f, androidx.compose.ui.graphics.Color(0xFFFF4081), "component_tester"),
-        RotaryMenuItem("pinouts", "پین‌اوت‌ها", null, 150f, androidx.compose.ui.graphics.Color(0xFFE040FB), "pinouts"),
-        RotaryMenuItem("secret_codes", "کدهای مخفی", null, 210f, androidx.compose.ui.graphics.Color(0xFFFFAB40), "secret_codes")
+        RotaryMenuItem(
+            id = "troubleshoot",
+            label = "عیب‌یابی",
+            icon = null,
+            angleDegrees = 270f,
+            color = Color(0xFF00E5FF),
+            route = "problem_list"
+        ),
+        RotaryMenuItem(
+            id = "schematics",
+            label = "نقشه‌خوانی",
+            icon = null,
+            angleDegrees = 315f,
+            color = Color(0xFFFFD740),
+            route = "schematics"
+        ),
+        RotaryMenuItem(
+            id = "power_diag",
+            label = "جریان‌کشی",
+            icon = null,
+            angleDegrees = 0f,
+            color = Color(0xFF69F0AE),
+            route = "power_diagnostics"
+        ),
+        RotaryMenuItem(
+            id = "component_test",
+            label = "تست قطعات",
+            icon = null,
+            angleDegrees = 45f,
+            color = Color(0xFFFF4081),
+            route = "component_tester"
+        ),
+        RotaryMenuItem(
+            id = "pinouts",
+            label = "پین‌اوت‌ها",
+            icon = null,
+            angleDegrees = 90f,
+            color = Color(0xFFE040FB),
+            route = "pinouts"
+        ),
+        RotaryMenuItem(
+            id = "secret_codes",
+            label = "کدهای مخفی",
+            icon = null,
+            angleDegrees = 135f,
+            color = Color(0xFFFFAB40),
+            route = "secret_codes"
+        ),
+        RotaryMenuItem(
+            id = "backup",
+            label = "پشتیبان‌گیری",
+            icon = null,
+            angleDegrees = 180f,
+            color = Color(0xFFEF5350),
+            route = "backup"
+        ),
+        RotaryMenuItem(
+            id = "customer",
+            label = "مشتریان",
+            icon = null,
+            angleDegrees = 225f,
+            color = Color(0xFF26C6DA),
+            route = "customer"
+        )
     )
 
     val selectedItem: StateFlow<RotaryMenuItem?> = _selectedIndex.map { index ->

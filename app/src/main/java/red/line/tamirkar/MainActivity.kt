@@ -19,9 +19,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import red.line.tamirkar.ui.backup.BackupScreen
+import red.line.tamirkar.ui.codes.SecretCodesScreen
+import red.line.tamirkar.ui.customer.CustomerScreen
 import red.line.tamirkar.ui.diagnosis.DiagnosisStartScreen
 import red.line.tamirkar.ui.diagnosis.DiagnosisWizardScreen
 import red.line.tamirkar.ui.home.RotaryKnobScreen
+import red.line.tamirkar.ui.power.PowerDiagnosticsScreen
 import red.line.tamirkar.ui.problems.ProblemDetailScreen
 import red.line.tamirkar.ui.problems.ProblemListScreen
 import red.line.tamirkar.ui.theme.TamirkarTheme
@@ -56,7 +60,11 @@ fun AppNavHost() {
             RotaryKnobScreen(
                 onMenuItemClick = { route ->
                     when (route) {
-                        "diagnosis" -> navController.navigate("problem_list")
+                        "problem_list" -> navController.navigate("problem_list")
+                        "power_diagnostics" -> navController.navigate("power_diagnostics")
+                        "secret_codes" -> navController.navigate("secret_codes")
+                        "backup" -> navController.navigate("backup")
+                        "customer" -> navController.navigate("customer")
                         else -> navController.navigate("placeholder/$route")
                     }
                 }
@@ -116,6 +124,36 @@ fun AppNavHost() {
             )
         }
 
+        composable("power_diagnostics") {
+            PowerDiagnosticsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable("secret_codes") {
+            SecretCodesScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable("backup") {
+            BackupScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable("customer") {
+            CustomerScreen(
+                onBackClick = { navController.popBackStack() },
+                onAddCustomer = {
+                    // TODO: navigate to AddEditCustomerScreen
+                },
+                onCustomerClick = { customerId ->
+                    // TODO: navigate to customer details
+                }
+            )
+        }
+
         composable(
             route = "placeholder/{route}",
             arguments = listOf(navArgument("route") { type = NavType.StringType })
@@ -132,10 +170,8 @@ fun AppNavHost() {
 fun PlaceholderScreen(route: String, onBack: () -> Unit) {
     val routeLabel = when (route) {
         "schematics" -> "نقشه‌خوانی"
-        "power_diagnostics" -> "جریان‌کشی"
         "component_tester" -> "تست قطعات"
         "pinouts" -> "پین‌اوت‌ها"
-        "secret_codes" -> "کدهای مخفی"
         else -> route
     }
 
