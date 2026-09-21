@@ -3,6 +3,8 @@ package red.line.tamirkar.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import red.line.tamirkar.core.result.RepairResult
+import red.line.tamirkar.data.importer.ImportResult
+import red.line.tamirkar.data.importer.MergeStrategy
 import red.line.tamirkar.data.local.database.RepairDatabase
 import red.line.tamirkar.data.local.entity.DiagnosisNodeEntity
 import red.line.tamirkar.data.local.entity.SearchHistoryEntity
@@ -22,35 +24,34 @@ class RepairRepositoryImpl @Inject constructor(
     private val db: RepairDatabase
 ) : RepairRepository {
 
-    override fun getBrands(): Flow<RepairResult<List<Brand>>> {
-        return flowOf(RepairResult.Success(emptyList()))
-    }
+    override fun getBrands(): Flow<RepairResult<List<Brand>>> =
+        flowOf(RepairResult.Success(emptyList()))
 
-    override fun getModelsByBrand(brandId: String): Flow<RepairResult<List<DeviceModel>>> {
-        return flowOf(RepairResult.Success(emptyList()))
-    }
+    override fun getModelsByBrand(brandId: String): Flow<RepairResult<List<DeviceModel>>> =
+        flowOf(RepairResult.Success(emptyList()))
 
     override suspend fun getBrandById(brandId: String): Brand? = null
 
     override suspend fun getModelById(modelId: String): DeviceModel? = null
 
-    override suspend fun searchModels(query: String): RepairResult<List<DeviceModel>> {
-        return RepairResult.Success(emptyList())
-    }
+    override suspend fun searchModels(query: String): RepairResult<List<DeviceModel>> =
+        RepairResult.Success(emptyList())
 
     override suspend fun getProblemDetail(problemId: String): ProblemDetail? = null
 
-    override suspend fun startDiagnosis(problemId: String, modelId: String?): RepairResult<String> {
-        return RepairResult.Success("session_id")
-    }
+    override suspend fun startDiagnosis(
+        problemId: String,
+        modelId: String?
+    ): RepairResult<String> = RepairResult.Success("session_id")
 
     override suspend fun answerDiagnosis(
         sessionId: String,
         optionId: String
     ): RepairResult<DiagnosisNodeEntity?> = RepairResult.Success(null)
 
-    override suspend fun backtrackDiagnosis(sessionId: String): RepairResult<DiagnosisNodeEntity?> =
-        RepairResult.Success(null)
+    override suspend fun backtrackDiagnosis(
+        sessionId: String
+    ): RepairResult<DiagnosisNodeEntity?> = RepairResult.Success(null)
 
     override suspend fun getAllCustomers(): List<Customer> = emptyList()
 
@@ -86,9 +87,20 @@ class RepairRepositoryImpl @Inject constructor(
 
     override suspend fun deleteInvoice(id: String) {}
 
-    override fun getSearchHistory(): Flow<List<SearchHistoryEntity>> = flowOf(emptyList())
+    override fun getSearchHistory(): Flow<List<SearchHistoryEntity>> =
+        flowOf(emptyList())
 
     override suspend fun addSearchHistory(query: String, resultCount: Int) {}
 
     override suspend fun seedDatabaseIfNeeded() {}
+
+    override suspend fun importJson(
+        content: String,
+        strategy: MergeStrategy
+    ): ImportResult {
+        return ImportResult(
+            success = true,
+            message = "ورود داده‌ها در این نسخه فعال نیست"
+        )
+    }
 }

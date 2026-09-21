@@ -7,19 +7,31 @@ import java.io.InputStream
 import java.io.OutputStream
 
 object SettingsSerializer : Serializer<AppSettings> {
-    private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
 
     override val defaultValue: AppSettings = AppSettings()
 
     override suspend fun readFrom(input: InputStream): AppSettings {
         return try {
-            json.decodeFromString(input.readBytes().decodeToString())
+            val bytes = input.readBytes()
+            if (bytes.isEmpty()) {
+                defaultValue
+            } else {
+                json.decodeFromString(
+                    AppSettings.serializer(),
+                    bytes.decodeToString()
+                )
+            }
         } catch (e: Exception) {
             defaultValue
         }
     }
 
     override suspend fun writeTo(t: AppSettings, output: OutputStream) {
-        output.write(json.encodeToString(t).encodeToByteArray())
+        val text = json.encodeToString(AppSettings.serializer(), t)
+        output.write(text.encodeToByteArray())
     }
 }
