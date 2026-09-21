@@ -38,7 +38,8 @@ enum class ProblemCategory(val label: String, val icon: String) {
     CAMERA("دوربین", "camera"),
     CONNECTIVITY("اتصالات", "connectivity"),
     HARDWARE("سخت‌افزار", "hardware"),
-    WATER("آب‌خوردگی", "water")
+    WATER("آب‌خوردگی", "water"),
+    SENSOR("سنسور", "sensor")
 }
 
 enum class ProblemSeverity(val label: String, val color: String) {
