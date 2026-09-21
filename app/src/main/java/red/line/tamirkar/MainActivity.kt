@@ -19,6 +19,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import red.line.tamirkar.ui.diagnosis.DiagnosisStartScreen
+import red.line.tamirkar.ui.diagnosis.DiagnosisWizardScreen
 import red.line.tamirkar.ui.home.RotaryKnobScreen
 import red.line.tamirkar.ui.problems.ProblemDetailScreen
 import red.line.tamirkar.ui.problems.ProblemListScreen
@@ -49,10 +51,7 @@ class MainActivity : ComponentActivity() {
 fun AppNavHost() {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = "main"
-    ) {
+    NavHost(navController = navController, startDestination = "main") {
         composable("main") {
             RotaryKnobScreen(
                 onMenuItemClick = { route ->
@@ -80,10 +79,40 @@ fun AppNavHost() {
             ProblemDetailScreen(
                 problemId = backStackEntry.arguments?.getString("problemId") ?: "",
                 onBackClick = { navController.popBackStack() },
-                onGuideClick = { /* TODO: RepairGuide */ },
+                onGuideClick = { /* TODO */ },
                 onRelatedProblemClick = { relatedId ->
                     navController.navigate("problem_detail/$relatedId")
                 }
+            )
+        }
+
+        composable("diagnosis_start") {
+            DiagnosisStartScreen(
+                onBackClick = { navController.popBackStack() },
+                onStartDiagnosis = { problemId, modelId ->
+                    val route = if (modelId != null) {
+                        "diagnosis_wizard/$problemId?modelId=$modelId"
+                    } else {
+                        "diagnosis_wizard/$problemId"
+                    }
+                    navController.navigate(route)
+                }
+            )
+        }
+
+        composable(
+            route = "diagnosis_wizard/{problemId}?modelId={modelId}",
+            arguments = listOf(
+                navArgument("problemId") { type = NavType.StringType },
+                navArgument("modelId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            DiagnosisWizardScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -131,7 +160,7 @@ fun PlaceholderScreen(route: String, onBack: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = onBack) {
-            Text("بازگشت به منوی اصلی")
+            Text("بازگشت")
         }
     }
 }
