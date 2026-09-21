@@ -1,6 +1,9 @@
 package red.line.tamirkar.data.local.seed
 
 import red.line.tamirkar.data.local.entity.*
+import red.line.tamirkar.domain.model.ProblemCategory
+import red.line.tamirkar.domain.model.ProblemSeverity
+import red.line.tamirkar.domain.model.RepairDifficulty
 import javax.inject.Inject
 
 class SeedData @Inject constructor() {
@@ -30,11 +33,96 @@ class SeedData @Inject constructor() {
     )
 
     fun problems(): List<ProblemEntity> = listOf(
-        ProblemEntity("problem_no_power", "power", "گوشی روشن نمی‌شود", "No Power", "no-power", severity = "high", difficulty = "advanced", isCommon = true),
-        ProblemEntity("problem_no_charge", "charging", "شارژ نمی‌شود", "No Charging", "no-charging", severity = "medium", difficulty = "intermediate", isCommon = true),
-        ProblemEntity("problem_bootloop", "software", "بوت‌لوپ", "Bootloop", "bootloop", severity = "high", difficulty = "intermediate", isCommon = true),
-        ProblemEntity("problem_touch_issue", "touch", "تاچ کار نمی‌کند", "Touch Not Working", "touch-not-working", severity = "medium", difficulty = "intermediate", isCommon = true),
-        ProblemEntity("problem_no_signal", "network", "آنتن ندارد", "No Signal", "no-signal", severity = "medium", difficulty = "advanced", isCommon = true)
+        ProblemEntity(
+            id = "problem_no_power",
+            title = "گوشی روشن نمی‌شود",
+            description = "دستگاه هیچ واکنشی به شارژر یا کلید Power نشان نمی‌دهد.",
+            category = ProblemCategory.POWER,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("هیچ واکنشی به کلید Power", "عدم نمایش شارژ", "جریان صفر روی منبع تغذیه"),
+            commonCauses = listOf("خرابی باتری", "خرابی PMIC", "خرابی CPU"),
+            estimatedFixTime = "30-60 دقیقه",
+            estimatedCost = "200-800 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("مولتی‌متر", "منبع تغذیه DC"),
+            requiredParts = listOf("باتری", "PMIC"),
+            warningNotes = listOf("قبل از هر اقدامی باتری را جدا کنید"),
+            successRate = 75,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_charge")
+        ),
+        ProblemEntity(
+            id = "problem_no_charge",
+            title = "شارژ نمی‌شود",
+            description = "دستگاه روشن می‌شود اما با شارژر، درصد باتری افزایش نمی‌یابد.",
+            category = ProblemCategory.CHARGING,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("عدم افزایش درصد باتری", "قطع و وصل شارژ"),
+            commonCauses = listOf("خرابی IC شارژ", "خرابی کانکتور"),
+            estimatedFixTime = "20-40 دقیقه",
+            estimatedCost = "100-500 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("مولتی‌متر"),
+            requiredParts = listOf("IC شارژ"),
+            warningNotes = emptyList(),
+            successRate = 85,
+            isCommon = true,
+            relatedProblems = listOf("problem_no_power")
+        ),
+        ProblemEntity(
+            id = "problem_bootloop",
+            title = "بوت‌لوپ",
+            description = "دستگاه به طور مداوم در لوگوی اولیه راه‌اندازی مجدد می‌شود.",
+            category = ProblemCategory.SOFTWARE,
+            severity = ProblemSeverity.HIGH,
+            symptoms = listOf("ری‌استارت مداوم", "ورود به Recovery"),
+            commonCauses = listOf("خرابی نرم‌افزار", "خرابی Storage"),
+            estimatedFixTime = "30-90 دقیقه",
+            estimatedCost = "150-600 هزار تومان",
+            difficulty = RepairDifficulty.MEDIUM,
+            requiredTools = listOf("کامپیوتر", "کابل USB"),
+            requiredParts = emptyList(),
+            warningNotes = listOf("قبل از فلش، بکاپ NVRAM بگیرید"),
+            successRate = 80,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+        ProblemEntity(
+            id = "problem_touch_issue",
+            title = "تاچ کار نمی‌کند",
+            description = "صفحه نمایش روشن است اما تاچ پاسخ نمی‌دهد.",
+            category = ProblemCategory.DISPLAY,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("عدم پاسخ تاچ", "تاچ خودکار"),
+            commonCauses = listOf("خرابی تاچ IC", "قطع شدن خطوط MIPI"),
+            estimatedFixTime = "40-90 دقیقه",
+            estimatedCost = "300-1200 هزار تومان",
+            difficulty = RepairDifficulty.HARD,
+            requiredTools = listOf("هیتر", "میکروسکوپ"),
+            requiredParts = listOf("تاچ IC"),
+            warningNotes = emptyList(),
+            successRate = 70,
+            isCommon = true,
+            relatedProblems = emptyList()
+        ),
+        ProblemEntity(
+            id = "problem_no_signal",
+            title = "آنتن ندارد",
+            description = "دستگاه SIM را تشخیص می‌دهد اما آنتن ندارد.",
+            category = ProblemCategory.NETWORK,
+            severity = ProblemSeverity.MEDIUM,
+            symptoms = listOf("آنتن صفر", "جستجوی دائم"),
+            commonCauses = listOf("خرابی IC آنتن", "قطع خطوط آنتن"),
+            estimatedFixTime = "45-120 دقیقه",
+            estimatedCost = "400-1500 هزار تومان",
+            difficulty = RepairDifficulty.EXPERT,
+            requiredTools = listOf("میکروسکوپ", "اسیلوسکوپ"),
+            requiredParts = listOf("RF IC"),
+            warningNotes = listOf("NVRAM backup ضروری است"),
+            successRate = 65,
+            isCommon = true,
+            relatedProblems = emptyList()
+        )
     )
 
     fun models(): List<DeviceModelEntity> = listOf(
