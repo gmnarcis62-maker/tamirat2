@@ -1,26 +1,35 @@
 package red.line.tamirkar.ui.problems
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import red.line.tamirkar.domain.model.Problem
-import red.line.tamirkar.domain.model.ProblemSeverity
-import red.line.tamirkar.domain.model.RepairDifficulty
 import red.line.tamirkar.domain.model.RepairGuide
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,17 +48,27 @@ fun ProblemDetailScreen(
     val scrollState = rememberScrollState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("جزئیات مشکل") },
+                title = {
+                    Text(
+                        "جزئیات مشکل",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "بازگشت")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "بازگشت"
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -62,7 +81,7 @@ fun ProblemDetailScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(strokeWidth = 3.dp)
             }
         } else if (currentProblem == null) {
             Box(
@@ -77,89 +96,121 @@ fun ProblemDetailScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 16.dp)
                     .verticalScroll(scrollState)
+                    .padding(horizontal = 16.dp)
             ) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ProblemHeaderCard(currentProblem)
+
+                if (currentProblem.symptoms.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    SymptomsCard(currentProblem)
+                }
+
+                if (currentProblem.commonCauses.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CausesCard(currentProblem)
+                }
+
+                if (currentProblem.requiredTools.isNotEmpty() ||
+                    currentProblem.requiredParts.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ToolsPartsRow(currentProblem)
+                }
+
+                if (currentProblem.warningNotes.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    WarningsCard(currentProblem)
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
-                ProblemHeader(problem = currentProblem)
-                Spacer(modifier = Modifier.height(20.dp))
-                SymptomsSection(problem = currentProblem)
-                Spacer(modifier = Modifier.height(20.dp))
-                CausesSection(problem = currentProblem)
-                Spacer(modifier = Modifier.height(20.dp))
-                ToolsAndPartsSection(problem = currentProblem)
-                Spacer(modifier = Modifier.height(20.dp))
-                WarningsSection(problem = currentProblem)
-                Spacer(modifier = Modifier.height(20.dp))
                 RepairGuideCard(
                     repairGuide = repairGuide,
                     onGuideClick = { onGuideClick(problemId) }
                 )
-                Spacer(modifier = Modifier.height(20.dp))
-                RelatedProblemsSection(
-                    relatedProblems = relatedProblems,
-                    onProblemClick = onRelatedProblemClick
-                )
+
+                if (relatedProblems.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    RelatedProblemsCard(
+                        relatedProblems = relatedProblems,
+                        onProblemClick = onRelatedProblemClick
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  HEADER CARD
+// ═══════════════════════════════════════════════════════════
+
 @Composable
-fun ProblemHeader(problem: Problem) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp)
+fun ProblemHeaderCard(problem: Problem) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp,
+        shadowElevation = 2.dp,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(24.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = problem.title,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = problem.description,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                InfoItem(
-                    icon = Icons.Default.DateRange,
+                InfoStatItem(
+                    icon = Icons.Default.Schedule,
                     label = "زمان تقریبی",
-                    value = problem.estimatedFixTime
+                    value = problem.estimatedFixTime,
+                    modifier = Modifier.weight(1f)
                 )
-                InfoItem(
+                InfoStatItem(
                     icon = Icons.Default.ShoppingCart,
                     label = "هزینه تقریبی",
-                    value = problem.estimatedCost
+                    value = problem.estimatedCost,
+                    modifier = Modifier.weight(1f)
                 )
-                InfoItem(
+                InfoStatItem(
                     icon = Icons.Default.Check,
                     label = "نرخ موفقیت",
-                    value = "${problem.successRate}%"
+                    value = "${problem.successRate}%",
+                    modifier = Modifier.weight(1f)
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DifficultyBadge(difficulty = problem.difficulty)
                 SeverityBadge(severity = problem.severity)
+                Spacer(modifier = Modifier.weight(1f))
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.secondaryContainer
@@ -167,6 +218,7 @@ fun ProblemHeader(problem: Problem) {
                     Text(
                         text = problem.category.label,
                         style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
@@ -177,176 +229,152 @@ fun ProblemHeader(problem: Problem) {
 }
 
 @Composable
-fun InfoItem(icon: ImageVector, label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(icon, null, modifier = Modifier.size(22.dp), tint = MaterialTheme.colorScheme.primary)
-        Spacer(modifier = Modifier.height(4.dp))
+fun InfoStatItem(
+    icon: ImageVector,
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.outline
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
         )
     }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  SYMPTOMS CARD
+// ═══════════════════════════════════════════════════════════
+
 @Composable
-fun DifficultyBadge(difficulty: RepairDifficulty) {
-    val color = when (difficulty) {
-        RepairDifficulty.EASY -> Color(0xFF4CAF50)
-        RepairDifficulty.MEDIUM -> Color(0xFFFF9800)
-        RepairDifficulty.HARD -> Color(0xFFF44336)
-        RepairDifficulty.EXPERT -> Color(0xFFB71C1C)
-    }
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = color.copy(alpha = 0.12f)
+fun SymptomsCard(problem: Problem) {
+    DetailSectionCard(
+        title = "علائم و نشانه‌ها",
+        icon = Icons.Default.Info,
+        iconColor = Color(0xFF3B82F6)
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            repeat(difficulty.stars) {
-                Icon(
-                    Icons.Default.Star,
-                    null,
-                    modifier = Modifier.size(14.dp),
-                    tint = color
-                )
-                Spacer(modifier = Modifier.width(2.dp))
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = difficulty.label,
-                style = MaterialTheme.typography.labelSmall,
-                color = color
+        problem.symptoms.forEachIndexed { index, symptom ->
+            NumberedItem(
+                number = index + 1,
+                text = symptom,
+                numberColor = Color(0xFF3B82F6)
             )
         }
     }
 }
 
-@Composable
-fun SymptomsSection(problem: Problem) {
-    DetailSection(title = "علائم و نشانه‌ها", icon = Icons.Default.Info) {
-        problem.symptoms.forEachIndexed { index, symptom ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "${index + 1}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = symptom,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-    }
-}
+// ═══════════════════════════════════════════════════════════
+//  CAUSES CARD
+// ═══════════════════════════════════════════════════════════
 
 @Composable
-fun CausesSection(problem: Problem) {
-    DetailSection(title = "علل رایج", icon = Icons.Default.Warning) {
+fun CausesCard(problem: Problem) {
+    DetailSectionCard(
+        title = "علل رایج",
+        icon = Icons.Default.Warning,
+        iconColor = Color(0xFFF59E0B)
+    ) {
         problem.commonCauses.forEachIndexed { index, cause ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    modifier = Modifier.size(28.dp)
+            NumberedItem(
+                number = index + 1,
+                text = cause,
+                numberColor = Color(0xFFF59E0B)
+            )
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TOOLS & PARTS
+// ═══════════════════════════════════════════════════════════
+
+@Composable
+fun ToolsPartsRow(problem: Problem) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        if (problem.requiredTools.isNotEmpty()) {
+            Box(modifier = Modifier.weight(1f)) {
+                DetailSectionCard(
+                    title = "ابزار مورد نیاز",
+                    icon = Icons.Default.Build,
+                    iconColor = Color(0xFF8B5CF6)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "${index + 1}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
+                    problem.requiredTools.forEach { tool ->
+                        ChipItem(text = tool)
                     }
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = cause,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
             }
         }
-    }
-}
-
-@Composable
-fun ToolsAndPartsSection(problem: Problem) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        if (problem.requiredTools.isNotEmpty()) {
-            DetailSection(
-                title = "ابزار مورد نیاز",
-                icon = Icons.Default.Build,
-                modifier = Modifier.weight(1f)
-            ) {
-                problem.requiredTools.forEach { tool ->
-                    ChipItem(text = tool)
-                }
-            }
-        }
-        Spacer(modifier = Modifier.width(12.dp))
         if (problem.requiredParts.isNotEmpty()) {
-            DetailSection(
-                title = "قطعات مورد نیاز",
-                icon = Icons.Default.Settings,
-                modifier = Modifier.weight(1f)
-            ) {
-                problem.requiredParts.forEach { part ->
-                    ChipItem(text = part)
+            Box(modifier = Modifier.weight(1f)) {
+                DetailSectionCard(
+                    title = "قطعات مورد نیاز",
+                    icon = Icons.Default.Settings,
+                    iconColor = Color(0xFF06B6D4)
+                ) {
+                    problem.requiredParts.forEach { part ->
+                        ChipItem(text = part)
+                    }
                 }
             }
         }
     }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  WARNINGS
+// ═══════════════════════════════════════════════════════════
+
 @Composable
-fun WarningsSection(problem: Problem) {
-    if (problem.warningNotes.isEmpty()) return
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)
-        ),
-        shape = RoundedCornerShape(16.dp)
+fun WarningsCard(problem: Problem) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Default.Warning,
-                    null,
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(28.dp)
-                )
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "هشدارهای ایمنی",
                     style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -358,12 +386,13 @@ fun WarningsSection(problem: Problem) {
                         .padding(vertical = 4.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = "•",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .size(6.dp)
+                            .background(MaterialTheme.colorScheme.error, CircleShape)
                     )
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = warning,
                         style = MaterialTheme.typography.bodyMedium,
@@ -376,112 +405,117 @@ fun WarningsSection(problem: Problem) {
     }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  REPAIR GUIDE
+// ═══════════════════════════════════════════════════════════
+
 @Composable
 fun RepairGuideCard(repairGuide: RepairGuide?, onGuideClick: () -> Unit) {
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = repairGuide != null, onClick = onGuideClick),
-        shape = RoundedCornerShape(16.dp)
+    Surface(
+        onClick = onGuideClick,
+        enabled = repairGuide != null,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.primaryContainer,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        Row(
+            modifier = Modifier.padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(52.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.HelpOutline,
-                                null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = repairGuide?.title ?: "راهنمای تعمیر",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = repairGuide?.let { "${it.steps.size} گام • ${it.estimatedTime}" } ?: "در دسترس نیست",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                    }
-                }
-                if (repairGuide != null) {
+                Box(contentAlignment = Alignment.Center) {
                     Icon(
-                        Icons.Default.KeyboardArrowRight,
-                        null,
-                        tint = MaterialTheme.colorScheme.primary
+                        Icons.AutoMirrored.Filled.HelpOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(28.dp)
                     )
                 }
             }
-
-            if (repairGuide == null) {
-                Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "راهنمای تعمیر برای این مشکل هنوز اضافه نشده است.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline
+                    text = repairGuide?.title ?: "راهنمای تعمیر",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = if (repairGuide != null) {
+                        "${repairGuide.steps.size} گام • ${repairGuide.estimatedTime}"
+                    } else {
+                        "هنوز اضافه نشده است"
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
+                )
+            }
+            if (repairGuide != null) {
+                Icon(
+                    Icons.Default.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
     }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  RELATED PROBLEMS
+// ═══════════════════════════════════════════════════════════
+
 @Composable
-fun RelatedProblemsSection(
+fun RelatedProblemsCard(
     relatedProblems: List<Problem>,
     onProblemClick: (String) -> Unit
 ) {
-    if (relatedProblems.isEmpty()) return
-    DetailSection(title = "مشکلات مرتبط", icon = Icons.Default.Share) {
+    DetailSectionCard(
+        title = "مشکلات مرتبط",
+        icon = Icons.Default.Share,
+        iconColor = Color(0xFF8B5CF6)
+    ) {
         relatedProblems.forEach { problem ->
-            ElevatedCard(
+            Surface(
+                onClick = { onProblemClick(problem.id) },
+                shape = RoundedCornerShape(10.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onProblemClick(problem.id) },
-                shape = RoundedCornerShape(12.dp)
+                    .padding(vertical = 3.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         Icons.Default.Build,
-                        null,
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = problem.title,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
                         )
                         Text(
                             text = problem.category.label,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Icon(
                         Icons.Default.KeyboardArrowRight,
-                        null,
-                        tint = MaterialTheme.colorScheme.outline
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
@@ -489,32 +523,87 @@ fun RelatedProblemsSection(
     }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  SHARED COMPONENTS
+// ═══════════════════════════════════════════════════════════
+
 @Composable
-fun DetailSection(
+fun DetailSectionCard(
     title: String,
     icon: ImageVector,
-    modifier: Modifier = Modifier,
+    iconColor: Color,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Column(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp,
+        shadowElevation = 1.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Surface(
+                    shape = CircleShape,
+                    color = iconColor.copy(alpha = 0.15f),
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            icon,
+                            contentDescription = null,
+                            tint = iconColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            content()
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        ElevatedCard(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp)
+    }
+}
+
+@Composable
+fun NumberedItem(
+    number: Int,
+    text: String,
+    numberColor: Color
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = numberColor.copy(alpha = 0.15f),
+            modifier = Modifier.size(26.dp)
         ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                content()
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = number.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = numberColor
+                )
             }
         }
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -523,12 +612,14 @@ fun ChipItem(text: String) {
     Surface(
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
-        modifier = Modifier.padding(vertical = 3.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 3.dp)
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -537,21 +628,41 @@ fun ChipItem(text: String) {
 @Composable
 fun ErrorState(onRetry: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(
-            Icons.Default.Warning,
-            null,
-            modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.error
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.errorContainer,
+            modifier = Modifier.size(80.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            "خطا در بارگذاری",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("خطا در بارگذاری", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            "لطفاً دوباره تلاش کنید",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onRetry) {
-            Icon(Icons.Default.Refresh, null)
+            Icon(Icons.Default.Refresh, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text("تلاش مجدد")
         }
