@@ -36,8 +36,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -64,6 +64,11 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/LICENSE.txt"
+            excludes += "/META-INF/NOTICE"
+            excludes += "/META-INF/NOTICE.txt"
         }
     }
 
@@ -81,6 +86,7 @@ dependencies {
 
     // Core Android
     implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.compose.ui:ui")
@@ -88,6 +94,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.foundation:foundation")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
@@ -112,8 +119,10 @@ dependencies {
     implementation("androidx.sqlite:sqlite-ktx:2.4.0")
 
     // DataStore
+    implementation("androidx.datastore:datastore:1.1.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-core:1.1.1")
+    implementation("androidx.datastore:datastore-core-okio:1.1.1")
 
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
@@ -138,6 +147,10 @@ dependencies {
 
     // Lottie
     implementation("com.airbnb.android:lottie-compose:6.4.1")
+
+    // Jetpack Glance (برای Widget)
+    implementation("androidx.glance:glance-appwidget:1.1.0")
+    implementation("androidx.glance:glance-material3:1.1.0")
 
     // CameraX + ML Kit
     val camerax = "1.3.4"

@@ -7,7 +7,7 @@ object PersianNormalizer {
             .replace("ك", "ک")
             .replace("ة", "ه")
             .replace("ۀ", "ه")
-            .replace(Regex("\s+"), " ")
+            .replace(Regex("\\s+"), " ")
             .lowercase()
     }
 

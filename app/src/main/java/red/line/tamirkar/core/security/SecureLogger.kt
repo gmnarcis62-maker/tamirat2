@@ -5,8 +5,8 @@ import timber.log.Timber
 object SecureLogger {
 
     private val sensitivePatterns = listOf(
-        Regex("\b\d{15}\d?\b"),
-        Regex("\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
+        Regex("\\b\\d{15}\\d?\\b"),
+        Regex("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b")
     )
 
     fun d(tag: String, message: String) {

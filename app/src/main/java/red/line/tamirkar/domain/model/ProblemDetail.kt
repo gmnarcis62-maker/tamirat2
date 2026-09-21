@@ -59,7 +59,7 @@ enum class RepairDifficulty(val label: String, val stars: Int) {
 data class ProblemCause(
     val id: String,
     val description: String,
-    val probability: Int = 0, // 0-100
+    val probability: Int = 0,
     val testMethod: String = "",
     val confirmationSigns: List<String> = emptyList()
 )
@@ -82,41 +82,6 @@ data class CostEstimate(
     val max: Double,
     val currency: String = "تومان",
     val notes: String = ""
-)
-
-@Serializable
-data class RepairGuide(
-    val id: String,
-    val problemId: String,
-    val title: String,
-    val steps: List<RepairStep> = emptyList(),
-    val totalSteps: Int = 0,
-    val estimatedDuration: String = "",
-    val difficulty: RepairDifficulty = RepairDifficulty.MEDIUM,
-    val tools: List<Tool> = emptyList(),
-    val parts: List<Part> = emptyList(),
-    val warnings: List<String> = emptyList(),
-    val tips: List<String> = emptyList(),
-    val beforeStart: List<String> = emptyList(),
-    val afterFinish: List<String> = emptyList(),
-    val videoUrl: String? = null,
-    val imageUrls: List<String> = emptyList()
-)
-
-@Serializable
-data class RepairStep(
-    val stepNumber: Int,
-    val title: String,
-    val description: String,
-    val detailedInstructions: String = "",
-    val imageUrl: String? = null,
-    val warnings: List<String> = emptyList(),
-    val tips: List<String> = emptyList(),
-    val estimatedTime: String = "",
-    val requiredTools: List<String> = emptyList(),
-    val checkPoints: List<String> = emptyList(),
-    val isCritical: Boolean = false,
-    val canSkip: Boolean = false
 )
 
 @Serializable
