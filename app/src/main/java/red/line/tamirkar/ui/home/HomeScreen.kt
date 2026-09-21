@@ -2,13 +2,32 @@ package red.line.tamirkar.ui.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.BrandingWatermark
+import androidx.compose.material.icons.filled.Construction
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Handyman
+import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import red.line.tamirkar.core.util.PersianDateUtil
+
+data class QuickAccessItem(
+    val title: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
+)
 
 @Composable
 fun HomeScreen(
@@ -47,30 +66,34 @@ fun HomeScreen(
         }
 
         val quickAccess = listOf(
-            Triple("عیب‌یابی هوشمند", Icons.Default.Psychology) to onDiagnosisClick,
-            Triple("برندهای موبایل", Icons.Default.BrandingWatermark) to onBrandsClick,
-            Triple("مدل‌های گوشی", Icons.Default.Smartphone) to { onModelsClick("") },
-            Triple("بانک تعمیرات", Icons.Default.Handyman) to {},
-            Triple("خطاها", Icons.Default.ErrorOutline) to {},
-            Triple("ابزار تعمیرکار", Icons.Default.Construction) to {}
+            QuickAccessItem("عیب‌یابی هوشمند", Icons.Default.Psychology, onDiagnosisClick),
+            QuickAccessItem("برندهای موبایل", Icons.Default.BrandingWatermark, onBrandsClick),
+            QuickAccessItem("مدل‌های گوشی", Icons.Default.Smartphone) { onModelsClick("") },
+            QuickAccessItem("بانک تعمیرات", Icons.Default.Handyman) {},
+            QuickAccessItem("خطاها", Icons.Default.ErrorOutline) {},
+            QuickAccessItem("ابزار تعمیرکار", Icons.Default.Construction) {}
         )
 
-        items(quickAccess.size) { index ->
-            val (data, action) = quickAccess[index]
-            val (title, icon) = data
+        items(quickAccess) { item ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                onClick = action
+                onClick = item.onClick
             ) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Icon(
+                        item.icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                     Spacer(modifier = Modifier.width(16.dp))
-                    Text(title, style = MaterialTheme.typography.bodyLarge)
+                    Text(item.title, style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }

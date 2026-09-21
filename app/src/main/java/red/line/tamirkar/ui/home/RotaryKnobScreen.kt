@@ -1,5 +1,9 @@
 package red.line.tamirkar.ui.home
 
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.unit.width
+import androidx.compose.ui.unit.height
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
