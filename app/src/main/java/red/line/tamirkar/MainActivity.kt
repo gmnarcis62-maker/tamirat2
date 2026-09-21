@@ -5,19 +5,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import red.line.tamirkar.ui.home.RotaryKnobScreen
+import red.line.tamirkar.ui.problems.ProblemDetailScreen
+import red.line.tamirkar.ui.problems.ProblemListScreen
 import red.line.tamirkar.ui.theme.TamirkarTheme
 
 @AndroidEntryPoint
@@ -34,20 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var currentRoute by remember { mutableStateOf<String?>(null) }
-
-                    if (currentRoute == null) {
-                        RotaryKnobScreen(
-                            onMenuItemClick = { route ->
-                                currentRoute = route
-                            }
-                        )
-                    } else {
-                        PlaceholderScreen(
-                            route = currentRoute!!,
-                            onBack = { currentRoute = null }
-                        )
-                    }
+                    AppNavHost()
                 }
             }
         }
@@ -55,9 +46,62 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+fun AppNavHost() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "main"
+    ) {
+        composable("main") {
+            RotaryKnobScreen(
+                onMenuItemClick = { route ->
+                    when (route) {
+                        "diagnosis" -> navController.navigate("problem_list")
+                        else -> navController.navigate("placeholder/$route")
+                    }
+                }
+            )
+        }
+
+        composable("problem_list") {
+            ProblemListScreen(
+                onBackClick = { navController.popBackStack() },
+                onProblemClick = { problemId ->
+                    navController.navigate("problem_detail/$problemId")
+                }
+            )
+        }
+
+        composable(
+            route = "problem_detail/{problemId}",
+            arguments = listOf(navArgument("problemId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            ProblemDetailScreen(
+                problemId = backStackEntry.arguments?.getString("problemId") ?: "",
+                onBackClick = { navController.popBackStack() },
+                onGuideClick = { /* TODO: RepairGuide */ },
+                onRelatedProblemClick = { relatedId ->
+                    navController.navigate("problem_detail/$relatedId")
+                }
+            )
+        }
+
+        composable(
+            route = "placeholder/{route}",
+            arguments = listOf(navArgument("route") { type = NavType.StringType })
+        ) { backStackEntry ->
+            PlaceholderScreen(
+                route = backStackEntry.arguments?.getString("route") ?: "",
+                onBack = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+@Composable
 fun PlaceholderScreen(route: String, onBack: () -> Unit) {
     val routeLabel = when (route) {
-        "diagnosis" -> "عیب‌یابی هوشمند"
         "schematics" -> "نقشه‌خوانی"
         "power_diagnostics" -> "جریان‌کشی"
         "component_tester" -> "تست قطعات"

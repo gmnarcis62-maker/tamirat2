@@ -6,8 +6,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import red.line.tamirkar.data.repository.BackupRepositoryImpl
 import red.line.tamirkar.data.repository.OtaRepositoryImpl
+import red.line.tamirkar.data.repository.ProblemRepositoryImpl
 import red.line.tamirkar.domain.repository.BackupRepository
 import red.line.tamirkar.domain.repository.OtaRepository
+import red.line.tamirkar.domain.repository.ProblemRepository
 import javax.inject.Singleton
 
 @Module
@@ -21,4 +23,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindOtaRepository(impl: OtaRepositoryImpl): OtaRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProblemRepository(impl: ProblemRepositoryImpl): ProblemRepository
 }
