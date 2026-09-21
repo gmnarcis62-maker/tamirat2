@@ -18,7 +18,6 @@ import red.line.tamirkar.ui.theme.TamirkarTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -41,9 +40,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MinimalHomeScreen() {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -54,34 +51,6 @@ fun MinimalHomeScreen() {
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "نسخه آزمایشی\nدر حال ساخت...",
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "✓ پایگاه داده با موفقیت راه‌اندازی شد",
-                    fontSize = 14.sp
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "✓ ماژول‌های اصلی آماده هستند",
-                    fontSize = 14.sp
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "⏳ رابط کاربری در حال تکمیل...",
-                    fontSize = 14.sp
-                )
-            }
-        }
+        Text(text = "نسخه آزمایشی", fontSize = 18.sp)
     }
 }

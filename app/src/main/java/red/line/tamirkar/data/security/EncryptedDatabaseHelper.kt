@@ -2,49 +2,37 @@ package red.line.tamirkar.data.security
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import red.line.tamirkar.data.local.database.RepairDatabase
 import red.line.tamirkar.data.local.seed.SeedData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 object EncryptedDatabaseHelper {
 
-    private const val DB_NAME = "repair_database_encrypted"
+    @Volatile
     private var INSTANCE: RepairDatabase? = null
 
     fun getDatabase(context: Context, seedData: SeedData): RepairDatabase {
         return INSTANCE ?: synchronized(this) {
-            val passphrase = DatabasePassphrase.getOrCreate(context)
-            val factory = SupportFactory(passphrase)
+            try {
+                System.loadLibrary("sqlcipher")
+            } catch (e: Throwable) {
+                // ignore
+            }
 
-            val instance = Room.databaseBuilder(
+            val passphrase = "tamirkar_secure_key_2024".toByteArray()
+            val factory = SupportOpenHelperFactory(passphrase)
+
+            val db = Room.databaseBuilder(
                 context.applicationContext,
                 RepairDatabase::class.java,
-                DB_NAME
+                "tamirkar.db"
             )
-            .openHelperFactory(factory)
-            .addCallback(object : RoomDatabase.Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        INSTANCE?.let { database ->
-                            database.brandDao().insertAll(seedData.brands())
-                            database.problemCategoryDao().insertAll(seedData.categories())
-                            database.problemDao().insertAll(seedData.problems())
-                            database.deviceModelDao().insertAll(seedData.models())
-                        }
-                    }
-                }
-            })
-            .fallbackToDestructiveMigration()
-            .build()
+                .openHelperFactory(factory)
+                .fallbackToDestructiveMigration()
+                .build()
 
-            INSTANCE = instance
-            instance
+            INSTANCE = db
+            db
         }
     }
 }
