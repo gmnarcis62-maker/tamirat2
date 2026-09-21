@@ -3,7 +3,6 @@ package red.line.tamirkar.ui.problems
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.NetworkCheck
 import androidx.compose.material.icons.filled.Power
@@ -35,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -95,7 +92,6 @@ fun ProblemListScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Search Bar
             SearchBar(
                 query = searchQuery,
                 onQueryChange = viewModel::onSearchQueryChange,
@@ -104,14 +100,12 @@ fun ProblemListScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
 
-            // Category Chips
             CategoryChips(
                 selected = selectedCategory,
                 onSelect = viewModel::onCategorySelected,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            // Problems List
             if (isLoading) {
                 LoadingState()
             } else if (problems.isEmpty()) {
@@ -152,7 +146,15 @@ fun ProblemListScreen(
                         }
                     }
 
-                    items(otherProblems.ifEmpty { problems }, key = { it.id }) { problem ->
+                    val displayList = if (commonProblems.isNotEmpty() &&
+                        searchQuery.isBlank() &&
+                        selectedCategory == null) {
+                        otherProblems
+                    } else {
+                        problems
+                    }
+
+                    items(displayList, key = { it.id }) { problem ->
                         ProblemCard(problem, onClick = { onProblemClick(problem.id) })
                     }
                 }
@@ -389,7 +391,6 @@ fun ProblemCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
-                // Category Icon Badge
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = getCategoryColor(problem.category).copy(alpha = 0.15f),
@@ -610,12 +611,4 @@ private fun getCategoryColor(category: ProblemCategory): Color = when (category)
     ProblemCategory.HARDWARE -> Color(0xFF64748B)
     ProblemCategory.WATER -> Color(0xFF0EA5E9)
     ProblemCategory.SENSOR -> Color(0xFF8B5CF6)
-}
-
-private fun parseColor(hex: String): Color {
-    return try {
-        Color(android.graphics.Color.parseColor(hex))
-    } catch (e: Exception) {
-        Color.Gray
-    }
 }
