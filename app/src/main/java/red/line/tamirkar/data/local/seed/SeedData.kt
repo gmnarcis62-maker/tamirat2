@@ -9,7 +9,7 @@ class SeedData @Inject constructor() {
         BrandEntity("brand_samsung", "سامسونگ", "سامسونگ", "Samsung", "samsung"),
         BrandEntity("brand_apple", "اپل", "اپل", "Apple", "apple"),
         BrandEntity("brand_xiaomi", "شیائومی", "شیائومی", "Xiaomi", "xiaomi"),
-        BrandEntity("brand_huawei", "هواوی", "هواوی", "Huawei", "huawei"),
+        BrandEntity("brand_huawei", "هوآوی", "هوآوی", "Huawei", "huawei"),
         BrandEntity("brand_oneplus", "وان‌پلاس", "وان پلاس", "OnePlus", "oneplus"),
         BrandEntity("brand_nokia", "نوکیا", "نوکیا", "Nokia", "nokia"),
         BrandEntity("brand_sony", "سونی", "سونی", "Sony", "sony"),
@@ -19,7 +19,7 @@ class SeedData @Inject constructor() {
     )
 
     fun categories(): List<ProblemCategoryEntity> = listOf(
-        ProblemCategoryEntity("power", "رون شدن / غذیه", "Power", "power"),
+        ProblemCategoryEntity("power", "روشن شدن / تغذیه", "Power", "power"),
         ProblemCategoryEntity("charging", "شارژ", "Charging", "charging"),
         ProblemCategoryEntity("display", "نمایشگر", "Display", "display"),
         ProblemCategoryEntity("touch", "تاچ", "Touch", "touch"),
@@ -60,7 +60,6 @@ class SeedData @Inject constructor() {
         )
     )
 
-    // Diagnosis Tree for No Power problem
     fun diagnosisTrees(): List<DiagnosisTreeEntity> = listOf(
         DiagnosisTreeEntity(
             id = "tree_no_power",
@@ -73,114 +72,108 @@ class SeedData @Inject constructor() {
     )
 
     fun diagnosisNodes(): List<DiagnosisNodeEntity> = listOf(
-        // Root node
         DiagnosisNodeEntity(
             id = "node_check_battery_voltage",
-            treeId = "tree_no_power",
-            type = "QUESTION",
-            title = "بررسی ولتاژ باتری",
-            description = "ابتدا ولتاژ باتری را با مولتی‌متر بررسی کنید.",
             question = "ولتاژ باتری دستگاه چقدر است؟",
-            instruction = "مولتی‌متر را روی حالت DC Voltage قرار دهید. پروب سیاه را به GND و پروب قرمز را به VBAT وصل کنید.",
-            orderIndex = 1,
-            isRoot = true
+            description = "ابتدا ولتاژ باتری را با مولتی‌متر بررسی کنید.",
+            options = emptyList(),
+            isStartNode = true,
+            isEndNode = false,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Battery voltage is low
         DiagnosisNodeEntity(
             id = "node_battery_low",
-            treeId = "tree_no_power",
-            type = "RESULT",
-            title = "باتری ضعیف یا خالی",
+            question = "",
             description = "ولتاژ باتری کمتر از حد نرمال است.",
-            question = null,
-            instruction = "باتری را شارژ کنید یا تعویض نمایید. اگر بعد از شارژ مشکل حل نشد، باتری خراب است.",
-            orderIndex = 2,
-            isRoot = false
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = true,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Battery voltage is normal, check power button
         DiagnosisNodeEntity(
             id = "node_check_power_button",
-            treeId = "tree_no_power",
-            type = "QUESTION",
-            title = "بررسی کلید Power",
-            description = "باتری ولتاژ مناسب دارد. کلید Power را بررسی کنید.",
             question = "آیا با فشار دادن کلید Power واکنشی مشاهده می‌کنید؟",
-            instruction = "کلید Power را چند ثانیه نگه دارید. آیا ویبره، صدا یا علائم جریان‌کشی روی منبع تغذیه مشاهده می‌شود؟",
-            orderIndex = 3,
-            isRoot = false
+            description = "باتری ولتاژ مناسب دارد. کلید Power را بررسی کنید.",
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = false,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Power button not responding, check power rails
         DiagnosisNodeEntity(
             id = "node_check_power_rails",
-            treeId = "tree_no_power",
-            type = "QUESTION",
-            title = "بررسی خطوط تغذیه اصلی",
-            description = "کلید Power واکنش ندارد. خطوط تغذیه را بررسی کنید.",
             question = "آیا ولتاژ روی خطوط تغذیه اصلی (VBAT, VPH_PWR) وجود دارد؟",
-            instruction = "ولتاژ VBAT و VPH_PWR را روی برد اندازه‌گیری کنید. مقادیر نرمال: 3.7V - 4.4V",
-            orderIndex = 4,
-            isRoot = false
+            description = "کلید Power واکنش ندارد. خطوط تغذیه را بررسی کنید.",
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = false,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Power rails OK, check PMIC
         DiagnosisNodeEntity(
             id = "node_check_pmic",
-            treeId = "tree_no_power",
-            type = "RESULT",
-            title = "احتمال خرابی PMIC",
+            question = "",
             description = "خطوط تغذیه وجود دارند اما دستگاه روشن نمی‌شود.",
-            instruction = "PMIC (Power Management IC) را بررسی کنید. جریان‌کشی غیرطبیعی، داغ شدن PMIC یا عدم تولید ولتاژهای خروجی نشانه خرابی آن است. تست حرارتی و بررسی کوتاه در اطراف PMIC انجام دهید.",
-            orderIndex = 5,
-            isRoot = false
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = true,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Power rails not OK
         DiagnosisNodeEntity(
             id = "node_short_circuit",
-            treeId = "tree_no_power",
-            type = "RESULT",
-            title = "کوتاهی در خط تغذیه",
+            question = "",
             description = "ولتاژ روی خطوط اصلی وجود ندارد.",
-            instruction = "احتمالاً کوتاهی در خط VBAT یا VPH_PWR وجود دارد. با مولتی‌متر حالت Buzzer تست کنید. خازن‌ها و دیودهای اطراف را بررسی نمایید.",
-            orderIndex = 6,
-            isRoot = false
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = true,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Power button responding
         DiagnosisNodeEntity(
             id = "node_check_boot_current",
-            treeId = "tree_no_power",
-            type = "QUESTION",
-            title = "بررسی جریان‌کش بوت",
-            description = "کلید Power واکنش دارد. جریان‌کشی را بررسی کنید.",
             question = "هنگام فشار دادن Power، آیا جریان لحظه‌ای مشاهده می‌شود؟",
-            instruction = "دستگاه را به منبع تغذیه وصل کنید. کلید Power را فشار دهید و جریان را مشاهده کنید.",
-            orderIndex = 7,
-            isRoot = false
+            description = "کلید Power واکنش دارد. جریان‌کشی را بررسی کنید.",
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = false,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: No boot current
         DiagnosisNodeEntity(
             id = "node_no_boot_current",
-            treeId = "tree_no_power",
-            type = "RESULT",
-            title = "عدم جریان‌کشی بوت",
+            question = "",
             description = "هیچ جریان لحظه‌ای مشاهده نمی‌شود.",
-            instruction = "CPU یا RAM/UFS ممکن است خراب باشند. همچنین کلاک‌های اصلی (Clock) را بررسی کنید. تست حرارتی CPU انجام دهید.",
-            orderIndex = 8,
-            isRoot = false
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = true,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         ),
-        // Node: Boot current present
         DiagnosisNodeEntity(
             id = "node_boot_current_present",
-            treeId = "tree_no_power",
-            type = "RESULT",
-            title = "جریان‌کشی بوت وجود دارد",
+            question = "",
             description = "جریان لحظه‌ای مشاهده می‌شود.",
-            instruction = "اگر جریان لحظه‌ای دارد اما لوگو نمی‌آید: مشکل از نرم‌افزار (Bootloop) یا Storage (UFS/eMMC) است. فلش کنید یا Storage را بررسی نمایید. اگر جریان ثابت می‌کشد: کوتاهی یا خرابی PMIC/CPU.",
-            orderIndex = 9,
-            isRoot = false
+            options = emptyList(),
+            isStartNode = false,
+            isEndNode = true,
+            problemId = "problem_no_power",
+            guideId = null,
+            severity = null
         )
     )
 
     fun diagnosisOptions(): List<DiagnosisOptionEntity> = listOf(
-        // From root: check battery voltage
         DiagnosisOptionEntity(
             id = "opt_battery_low",
             nodeId = "node_check_battery_voltage",
@@ -205,7 +198,6 @@ class SeedData @Inject constructor() {
             nextNodeId = "node_check_power_button",
             condition = null
         ),
-        // From check power button
         DiagnosisOptionEntity(
             id = "opt_power_no_response",
             nodeId = "node_check_power_button",
@@ -222,7 +214,6 @@ class SeedData @Inject constructor() {
             nextNodeId = "node_check_boot_current",
             condition = null
         ),
-        // From check power rails
         DiagnosisOptionEntity(
             id = "opt_rails_ok",
             nodeId = "node_check_power_rails",
@@ -239,7 +230,6 @@ class SeedData @Inject constructor() {
             nextNodeId = "node_short_circuit",
             condition = null
         ),
-        // From check boot current
         DiagnosisOptionEntity(
             id = "opt_no_boot_current",
             nodeId = "node_check_boot_current",

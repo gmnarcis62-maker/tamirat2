@@ -1,5 +1,10 @@
 package red.line.tamirkar.domain.diagnosis
 
+import red.line.tamirkar.data.local.dao.DiagnosisAnswerDao
+import red.line.tamirkar.data.local.dao.DiagnosisNodeDao
+import red.line.tamirkar.data.local.dao.DiagnosisOptionDao
+import red.line.tamirkar.data.local.dao.DiagnosisSessionDao
+import red.line.tamirkar.data.local.entity.DiagnosisAnswerEntity
 import red.line.tamirkar.data.local.entity.DiagnosisNodeEntity
 import red.line.tamirkar.data.local.entity.DiagnosisOptionEntity
 import red.line.tamirkar.data.local.entity.DiagnosisSessionEntity
@@ -8,145 +13,91 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DiagnosisEngineImpl @Inject constructor() : DiagnosisEngine {
-
-    private data class Session(
-        val id: String,
-        val problemId: String,
-        val modelId: String?,
-        val startedAt: Long,
-        var finishedAt: Long?,
-        var currentNodeId: String?,
-        var status: String,
-        val answeredOptions: MutableList<String>
-    )
-
-    private val sessions = mutableMapOf<String, Session>()
-
-    // داده‌های نمونه برای درخت تشخیصی
-    private val nodes = mutableMapOf<String, DiagnosisNodeEntity>()
-
-    init {
-        // نود شروع
-        nodes["start"] = DiagnosisNodeEntity(
-            id = "start",
-            question = "آیا دستگاه روشن می‌شود؟",
-            description = "ابتدا دستگاه را با شارژر به برق وصل کنید و کلید Power را ۳ ثانیه نگه دارید.",
-            options = emptyList(),
-            isStartNode = true,
-            isEndNode = false,
-            problemId = null,
-            guideId = null,
-            severity = null
-        )
-        nodes["node_2"] = DiagnosisNodeEntity(
-            id = "node_2",
-            question = "آیا نشانه‌های نفوذ آب یا خوردگی روی برد دیده می‌شود؟",
-            description = "قاب پشت را باز کنید و با ذره‌بین برد را بررسی کنید.",
-            options = emptyList(),
-            isStartNode = false,
-            isEndNode = false,
-            problemId = null,
-            guideId = null,
-            severity = null
-        )
-        nodes["node_3"] = DiagnosisNodeEntity(
-            id = "node_3",
-            question = "آیا با منبع تغذیه، جریان‌کشی مشاهده می‌شود؟",
-            description = "منبع تغذیه را روی 4.2V و 1A تنظیم کنید.",
-            options = emptyList(),
-            isStartNode = false,
-            isEndNode = false,
-            problemId = null,
-            guideId = null,
-            severity = null
-        )
-    }
+class DiagnosisEngineImpl @Inject constructor(
+    private val sessionDao: DiagnosisSessionDao,
+    private val answerDao: DiagnosisAnswerDao,
+    private val nodeDao: DiagnosisNodeDao,
+    private val optionDao: DiagnosisOptionDao
+) : DiagnosisEngine {
 
     override suspend fun createSession(problemId: String, modelId: String?): String {
-        val id = UUID.randomUUID().toString()
-        val session = Session(
-            id = id,
-            problemId = problemId,
+        val sessionId = UUID.randomUUID().toString()
+        val startNode = nodeDao.getStartNode()
+
+        val session = DiagnosisSessionEntity(
+            id = sessionId,
+            repairCaseId = null,
             modelId = modelId,
+            problemId = problemId,
             startedAt = System.currentTimeMillis(),
             finishedAt = null,
-            currentNodeId = "start",
-            status = "IN_PROGRESS",
-            answeredOptions = mutableListOf()
+            currentNodeId = startNode?.id,
+            status = if (startNode == null) "COMPLETED" else "IN_PROGRESS"
         )
-        sessions[id] = session
-        return id
+        sessionDao.insert(session)
+        return sessionId
     }
 
     override suspend fun getCurrentNode(sessionId: String): DiagnosisNodeEntity? {
-        val session = sessions[sessionId] ?: return null
+        val session = sessionDao.getById(sessionId) ?: return null
         if (session.status == "COMPLETED") return null
         val nodeId = session.currentNodeId ?: return null
-        return nodes[nodeId]
+        return nodeDao.getById(nodeId)
     }
 
     override suspend fun getOptions(nodeId: String): List<DiagnosisOptionEntity> {
-        // برای هر نود، دو گزینه بله/خیر برمی‌گردونیم
-        return listOf(
-            DiagnosisOptionEntity(
-                id = "${nodeId}_yes",
-                nodeId = nodeId,
-                title = "بله",
-                value = "yes",
-                nextNodeId = null,
-                condition = null
-            ),
-            DiagnosisOptionEntity(
-                id = "${nodeId}_no",
-                nodeId = nodeId,
-                title = "خیر",
-                value = "no",
-                nextNodeId = null,
-                condition = null
-            )
-        )
+        return optionDao.getByNodeId(nodeId)
     }
 
     override suspend fun submitAnswer(sessionId: String, optionId: String) {
-        val session = sessions[sessionId] ?: return
-        session.answeredOptions.add(optionId)
+        val session = sessionDao.getById(sessionId) ?: return
+        val option = optionDao.getById(optionId) ?: return
+        val currentNodeId = session.currentNodeId ?: return
 
-        // اگر ۳ سؤال جواب داده شده، نتیجه نهایی رو اعلام کن
-        if (session.answeredOptions.size >= 3) {
-            session.status = "COMPLETED"
-            session.currentNodeId = null
-            session.finishedAt = System.currentTimeMillis()
+        // ۱. ثبت پاسخ در دیتابیس
+        val answer = DiagnosisAnswerEntity(
+            id = UUID.randomUUID().toString(),
+            sessionId = sessionId,
+            nodeId = currentNodeId,
+            optionId = optionId,
+            value = option.value,
+            timestamp = System.currentTimeMillis()
+        )
+        answerDao.insert(answer)
+
+        // ۲. تعیین نود بعدی
+        val nextNodeId = option.nextNodeId
+        val nextNode = nextNodeId?.let { nodeDao.getById(it) }
+
+        val updated = if (nextNode == null || nextNode.isEndNode) {
+            session.copy(
+                currentNodeId = null,
+                status = "COMPLETED",
+                finishedAt = System.currentTimeMillis()
+            )
         } else {
-            session.currentNodeId = "node_${session.answeredOptions.size + 1}"
+            session.copy(currentNodeId = nextNode.id)
         }
+        sessionDao.update(updated)
     }
 
     override suspend fun goBack(sessionId: String) {
-        val session = sessions[sessionId] ?: return
-        if (session.answeredOptions.isEmpty()) return
+        val session = sessionDao.getById(sessionId) ?: return
+        val answers = answerDao.getBySessionSync(sessionId)
+        if (answers.isEmpty()) return
 
-        session.answeredOptions.removeAt(session.answeredOptions.size - 1)
-        session.status = "IN_PROGRESS"
-        session.finishedAt = null
-        session.currentNodeId = if (session.answeredOptions.isEmpty()) {
-            "start"
-        } else {
-            "node_${session.answeredOptions.size + 1}"
-        }
+        val lastAnswer = answers.last()
+        answerDao.deleteById(lastAnswer.id)
+
+        val updated = session.copy(
+            currentNodeId = lastAnswer.nodeId,
+            status = "IN_PROGRESS",
+            finishedAt = null
+        )
+        sessionDao.update(updated)
     }
 
     override suspend fun getSession(sessionId: String): DiagnosisSessionEntity? {
-        val session = sessions[sessionId] ?: return null
-        return DiagnosisSessionEntity(
-            id = session.id,
-            repairCaseId = null,
-            modelId = session.modelId,
-            problemId = session.problemId,
-            startedAt = session.startedAt,
-            finishedAt = session.finishedAt,
-            currentNodeId = session.currentNodeId,
-            status = session.status
-        )
+        return sessionDao.getById(sessionId)
     }
 }
