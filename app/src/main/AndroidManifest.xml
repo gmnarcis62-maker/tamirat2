@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- ==================== PERMISSIONS ==================== -->
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -37,8 +35,6 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:ignore="UnusedAttribute" />
 
-    <!-- ==================== APPLICATION ==================== -->
-
     <application
         android:name=".TamirkarApplication"
         android:allowBackup="false"
@@ -51,8 +47,6 @@
         android:theme="@style/Theme.Tamirkar"
         android:usesCleartextTraffic="false"
         tools:targetApi="34">
-
-        <!-- ==================== ACTIVITIES ==================== -->
 
         <activity
             android:name=".MainActivity"
@@ -72,21 +66,6 @@
             </intent-filter>
         </activity>
 
-        <!-- ==================== WORKMANAGER ==================== -->
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup"
-                tools:node="remove" />
-        </provider>
-
-        <!-- ==================== FILE PROVIDER ==================== -->
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -96,8 +75,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <!-- ==================== META-DATA ==================== -->
 
         <meta-data
             android:name="android.app.shortcuts"
