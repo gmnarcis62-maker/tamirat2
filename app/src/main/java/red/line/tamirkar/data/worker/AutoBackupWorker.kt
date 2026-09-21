@@ -27,4 +27,32 @@ class AutoBackupWorker @AssistedInject constructor(
             Result.retry()
         }
     }
+
+
+    companion object {
+        private const val WORK_NAME = "auto_backup_work"
+
+        fun schedule(context: android.content.Context) {
+            val constraints = androidx.work.Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .setRequiresStorageNotLow(true)
+                .build()
+
+            val request = androidx.work.PeriodicWorkRequestBuilder<AutoBackupWorker>(
+                1, java.util.concurrent.TimeUnit.DAYS
+            )
+                .setConstraints(constraints)
+                .build()
+
+            androidx.work.WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                WORK_NAME,
+                androidx.work.ExistingPeriodicWorkPolicy.KEEP,
+                request
+            )
+        }
+
+        fun cancel(context: android.content.Context) {
+            androidx.work.WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+        }
+    }
 }
