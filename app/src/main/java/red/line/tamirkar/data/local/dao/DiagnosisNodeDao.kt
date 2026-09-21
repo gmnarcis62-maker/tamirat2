@@ -5,6 +5,10 @@ import red.line.tamirkar.data.local.entity.DiagnosisNodeEntity
 
 @Dao
 interface DiagnosisNodeDao {
+
+    @Query("SELECT * FROM diagnosis_nodes WHERE problemId = :problemId AND isStartNode = 1 LIMIT 1")
+    suspend fun getStartNodeForProblem(problemId: String): DiagnosisNodeEntity?
+
     @Query("SELECT * FROM diagnosis_nodes WHERE isStartNode = 1 LIMIT 1")
     suspend fun getStartNode(): DiagnosisNodeEntity?
 
@@ -19,4 +23,7 @@ interface DiagnosisNodeDao {
 
     @Query("DELETE FROM diagnosis_nodes")
     suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) FROM diagnosis_nodes")
+    suspend fun count(): Int
 }

@@ -22,7 +22,7 @@ class DiagnosisEngineImpl @Inject constructor(
 
     override suspend fun createSession(problemId: String, modelId: String?): String {
         val sessionId = UUID.randomUUID().toString()
-        val startNode = nodeDao.getStartNode()
+        val startNode = nodeDao.getStartNodeForProblem(problemId)
 
         val session = DiagnosisSessionEntity(
             id = sessionId,
@@ -54,7 +54,6 @@ class DiagnosisEngineImpl @Inject constructor(
         val option = optionDao.getById(optionId) ?: return
         val currentNodeId = session.currentNodeId ?: return
 
-        // ۱. ثبت پاسخ در دیتابیس
         val answer = DiagnosisAnswerEntity(
             id = UUID.randomUUID().toString(),
             sessionId = sessionId,
@@ -65,13 +64,12 @@ class DiagnosisEngineImpl @Inject constructor(
         )
         answerDao.insert(answer)
 
-        // ۲. تعیین نود بعدی
         val nextNodeId = option.nextNodeId
         val nextNode = nextNodeId?.let { nodeDao.getById(it) }
 
         val updated = if (nextNode == null || nextNode.isEndNode) {
             session.copy(
-                currentNodeId = null,
+                currentNodeId = nextNode?.id,
                 status = "COMPLETED",
                 finishedAt = System.currentTimeMillis()
             )

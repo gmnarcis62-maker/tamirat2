@@ -300,47 +300,12 @@ class SeedData @Inject constructor() {
     )
 
     // ═══════════════════════════════════════════════════════════
-    //  DIAGNOSIS TREES
+    //  DIAGNOSIS - Delegation به DiagnosisSeedData
     // ═══════════════════════════════════════════════════════════
 
-    fun diagnosisTrees(): List<DiagnosisTreeEntity> = listOf(
-        DiagnosisTreeEntity("tree_no_power", "problem_no_power", null, "درخت عیب‌یابی: روشن نشدن", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_no_charge", "problem_no_charge", null, "درخت عیب‌یابی: شارژ نشدن", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_bootloop", "problem_bootloop", null, "درخت عیب‌یابی: بوت‌لوپ", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_touch", "problem_touch_issue", null, "درخت عیب‌یابی: تاچ", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_no_signal", "problem_no_signal", null, "درخت عیب‌یابی: آنتن", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_no_display", "problem_no_display", null, "درخت عیب‌یابی: صفحه سیاه", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_no_sound", "problem_no_sound", null, "درخت عیب‌یابی: بی‌صدا", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_no_imei", "problem_no_imei", null, "درخت عیب‌یابی: IMEI", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_battery_drain", "problem_battery_drain", null, "درخت عیب‌یابی: خالی شدن سریع", "راهنمای مرحله‌ای", 1),
-        DiagnosisTreeEntity("tree_wifi", "problem_wifi_issue", null, "درخت عیب‌یابی: WiFi", "راهنمای مرحله‌ای", 1)
-    )
+    fun diagnosisTrees(): List<DiagnosisTreeEntity> = DiagnosisSeedData.trees()
 
-    // ═══════════════════════════════════════════════════════════
-    //  DIAGNOSIS NODES
-    // ═══════════════════════════════════════════════════════════
+    fun diagnosisNodes(): List<DiagnosisNodeEntity> = DiagnosisSeedData.nodes()
 
-    fun diagnosisNodes(): List<DiagnosisNodeEntity> = listOf(
-        DiagnosisNodeEntity("node_check_battery_voltage", "ولتاژ باتری دستگاه چقدر است؟", "ابتدا ولتاژ باتری را با مولتی‌متر بررسی کنید.", emptyList(), true, false, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_battery_low", "", "ولتاژ باتری کمتر از حد نرمال است.", emptyList(), false, true, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_check_power_button", "آیا با فشار دادن کلید Power واکنشی مشاهده می‌کنید؟", "باتری ولتاژ مناسب دارد. کلید Power را بررسی کنید.", emptyList(), false, false, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_check_power_rails", "آیا ولتاژ روی خطوط تغذیه اصلی (VBAT, VPH_PWR) وجود دارد؟", "کلید Power واکنش ندارد. خطوط تغذیه را بررسی کنید.", emptyList(), false, false, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_check_pmic", "", "خطوط تغذیه وجود دارند اما دستگاه روشن نمی‌شود.", emptyList(), false, true, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_short_circuit", "", "ولتاژ روی خطوط اصلی وجود ندارد.", emptyList(), false, true, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_check_boot_current", "هنگام فشار دادن Power، آیا جریان لحظه‌ای مشاهده می‌شود؟", "کلید Power واکنش دارد.", emptyList(), false, false, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_no_boot_current", "", "هیچ جریان لحظه‌ای مشاهده نمی‌شود.", emptyList(), false, true, "problem_no_power", null, null),
-        DiagnosisNodeEntity("node_boot_current_present", "", "جریان لحظه‌ای مشاهده می‌شود.", emptyList(), false, true, "problem_no_power", null, null)
-    )
-
-    fun diagnosisOptions(): List<DiagnosisOptionEntity> = listOf(
-        DiagnosisOptionEntity("opt_battery_low", "node_check_battery_voltage", "ولتاژ کمتر از 3.5V است", "low", "node_battery_low", "voltage < 3.5"),
-        DiagnosisOptionEntity("opt_battery_normal", "node_check_battery_voltage", "ولتاژ بین 3.5V تا 4.4V است", "normal", "node_check_power_button", "voltage >= 3.5 && voltage <= 4.4"),
-        DiagnosisOptionEntity("opt_battery_unknown", "node_check_battery_voltage", "اطلاع ندارم", "unknown", "node_check_power_button", null),
-        DiagnosisOptionEntity("opt_power_no_response", "node_check_power_button", "خیر، هیچ واکنشی ندارد", "no_response", "node_check_power_rails", null),
-        DiagnosisOptionEntity("opt_power_response", "node_check_power_button", "بله، واکنش دارد", "response", "node_check_boot_current", null),
-        DiagnosisOptionEntity("opt_rails_ok", "node_check_power_rails", "بله، ولتاژ وجود دارد", "ok", "node_check_pmic", null),
-        DiagnosisOptionEntity("opt_rails_not_ok", "node_check_power_rails", "خیر، ولتاژی وجود ندارد", "not_ok", "node_short_circuit", null),
-        DiagnosisOptionEntity("opt_no_boot_current", "node_check_boot_current", "خیر، جریانی مشاهده نمی‌شود", "no_current", "node_no_boot_current", null),
-        DiagnosisOptionEntity("opt_boot_current_present", "node_check_boot_current", "بله، جریان لحظه‌ای دارد", "current_present", "node_boot_current_present", null)
-    )
+    fun diagnosisOptions(): List<DiagnosisOptionEntity> = DiagnosisSeedData.options()
 }
