@@ -33,10 +33,6 @@ object DiagnosisSeedData {
     private fun tree(id: String, problemId: String, title: String) =
         DiagnosisTreeEntity(id, problemId, null, title, "راهنمای مرحله‌ای", 1)
 
-    // ═══════════════════════════════════════════════════════════
-    //  TREES
-    // ═══════════════════════════════════════════════════════════
-
     fun trees(): List<DiagnosisTreeEntity> = listOf(
         // POWER
         tree("tree_no_power", "problem_no_power", "عیب‌یابی: روشن نشدن"),
@@ -96,12 +92,36 @@ object DiagnosisSeedData {
         tree("tree_headphone_jack", "problem_headphone_jack", "عیب‌یابی: جک هدفون"),
         tree("tree_ringtone_low", "problem_ringtone_low", "عیب‌یابی: صدای زنگ ضعیف"),
         tree("tree_no_audio_call", "problem_no_audio_call", "عیب‌یابی: بی‌صدایی در تماس"),
-        tree("tree_loudspeaker_crackling", "problem_loudspeaker_crackling", "عیب‌یابی: ترق‌ترق بلندگو")
-    )
+        tree("tree_loudspeaker_crackling", "problem_loudspeaker_crackling", "عیب‌یابی: ترق‌ترق بلندگو"),
 
-    // ═══════════════════════════════════════════════════════════
-    //  NODES
-    // ═══════════════════════════════════════════════════════════
+        // CAMERA
+        tree("tree_camera_issue", "problem_camera_issue", "عیب‌یابی: دوربین"),
+        tree("tree_camera_blurry", "problem_camera_blurry", "عیب‌یابی: تصویر تار"),
+        tree("tree_camera_black", "problem_camera_black", "عیب‌یابی: دوربین سیاه"),
+        tree("tree_front_camera", "problem_front_camera_issue", "عیب‌یابی: دوربین سلفی"),
+        tree("tree_flash_not_working", "problem_flash_not_working", "عیب‌یابی: فلاش"),
+        tree("tree_camera_lens_scratched", "problem_camera_lens_scratched", "عیب‌یابی: خط لنز"),
+
+        // SOFTWARE
+        tree("tree_slow_system", "problem_slow_system", "عیب‌یابی: کندی"),
+        tree("tree_app_crash", "problem_app_crash", "عیب‌یابی: کرش اپ"),
+        tree("tree_virus_malware", "problem_virus_malware", "عیب‌یابی: ویروس"),
+        tree("tree_play_store_error", "problem_play_store_error", "عیب‌یابی: Google Play"),
+        tree("tree_storage_full", "problem_storage_full", "عیب‌یابی: حافظه پر"),
+        tree("tree_factory_reset", "problem_factory_reset_needed", "عیب‌یابی: ریست فکتوری"),
+
+        // SENSOR
+        tree("tree_fingerprint", "problem_fingerprint_issue", "عیب‌یابی: اثر انگشت"),
+        tree("tree_proximity", "problem_proximity_sensor", "عیب‌یابی: سنسور مجاورت"),
+        tree("tree_gyroscope", "problem_gyroscope_issue", "عیب‌یابی: ژیروسکوپ"),
+        tree("tree_face_unlock", "problem_face_unlock_issue", "عیب‌یابی: قفل چهره"),
+
+        // WATER / HARDWARE
+        tree("tree_water_damage", "problem_water_damage", "عیب‌یابی: آب‌خوردگی"),
+        tree("tree_usb_issue", "problem_usb_issue", "عیب‌یابی: USB"),
+        tree("tree_back_cover_damage", "problem_back_cover_damage", "عیب‌یابی: درب پشت"),
+        tree("tree_frame_bent", "problem_frame_bent", "عیب‌یابی: خم شدن فریم")
+    )
 
     fun nodes(): List<DiagnosisNodeEntity> = buildList {
 
@@ -363,11 +383,99 @@ object DiagnosisSeedData {
         add(n("lc_q1", "problem_loudspeaker_crackling", "آیا ترق‌ترق در همه صداها هست؟", null, start = true))
         add(n("lc_e_spk", "problem_loudspeaker_crackling", "خرابی بلندگو", "تعویض", end = true))
         add(n("lc_e_amp", "problem_loudspeaker_crackling", "خرابی آمپلی‌فایر", "تعویض IC", end = true))
-    }
 
-    // ═══════════════════════════════════════════════════════════
-    //  OPTIONS
-    // ═══════════════════════════════════════════════════════════
+        // ═══════════ CAMERA ═══════════
+        add(n("cam_q1", "problem_camera_issue", "آیا اپ دوربین باز می‌شود؟", null, start = true))
+        add(n("cam_q2", "problem_camera_issue", "آیا صفحه دوربین سیاه است؟"))
+        add(n("cam_e_app", "problem_camera_issue", "مشکل نرم‌افزاری", "پاک کردن کش دوربین", end = true))
+        add(n("cam_e_module", "problem_camera_issue", "خرابی ماژول دوربین", "تعویض ماژول", end = true))
+        add(n("cam_e_conn", "problem_camera_issue", "قطع کانکتور", "محکم کردن فلت", end = true))
+
+        add(n("cb_q1", "problem_camera_blurry", "آیا لنز کثیف است؟", null, start = true))
+        add(n("cb_q2", "problem_camera_blurry", "آیا ضربه دیده است؟"))
+        add(n("cb_e_clean", "problem_camera_blurry", "لنز کثیف", "تمیز کردن لنز", end = true))
+        add(n("cb_e_ois", "problem_camera_blurry", "خرابی OIS", "تعویض ماژول", end = true))
+        add(n("cb_e_module", "problem_camera_blurry", "خرابی ماژول", "تعویض ماژول", end = true))
+
+        add(n("cbl_q1", "problem_camera_black", "آیا در اپ دیگر هم سیاه است؟", null, start = true))
+        add(n("cbl_e_app", "problem_camera_black", "مشکل نرم‌افزاری", "ریست اپ دوربین", end = true))
+        add(n("cbl_e_sensor", "problem_camera_black", "خرابی سنسور", "تعویض ماژول", end = true))
+
+        add(n("fc_q1", "problem_front_camera_issue", "آیا دوربین جلو باز می‌شود؟", null, start = true))
+        add(n("fc_e_conn", "problem_front_camera_issue", "قطع کانکتور", "محکم کردن", end = true))
+        add(n("fc_e_module", "problem_front_camera_issue", "خرابی ماژول جلو", "تعویض ماژول", end = true))
+
+        add(n("fl_q1", "problem_flash_not_working", "آیا فلاش در حالت چراغ‌قوه کار می‌کند؟", null, start = true))
+        add(n("fl_e_led", "problem_flash_not_working", "خرابی LED", "تعویض LED", end = true))
+        add(n("fl_e_ic", "problem_flash_not_working", "خرابی IC", "تعویض IC", end = true))
+
+        add(n("cls_q1", "problem_camera_lens_scratched", "آیا خط روی شیشه لنز است؟", null, start = true))
+        add(n("cls_e_replace", "problem_camera_lens_scratched", "تعویض شیشه", "شیشه لنز جدید", end = true))
+
+        // ═══════════ SOFTWARE ═══════════
+        add(n("ss_q1", "problem_slow_system", "آیا حافظه پر است؟", null, start = true))
+        add(n("ss_q2", "problem_slow_system", "آیا بعد از آپدیت کند شد؟"))
+        add(n("ss_e_storage", "problem_slow_system", "حافظه پر", "پاکسازی فایل‌ها", end = true))
+        add(n("ss_e_reset", "problem_slow_system", "نیاز به ریست", "Factory Reset", end = true))
+        add(n("ss_e_storage_hw", "problem_slow_system", "خرابی Storage", "تعویض IC حافظه", end = true))
+
+        add(n("ac_q1", "problem_app_crash", "آیا همه اپ‌ها کرش می‌کنند؟", null, start = true))
+        add(n("ac_e_sw", "problem_app_crash", "مشکل نرم‌افزاری", "پاکسازی Data", end = true))
+        add(n("ac_e_reset", "problem_app_crash", "نیاز به ریست", "Factory Reset", end = true))
+
+        add(n("vm_q1", "problem_virus_malware", "آیا تبلیغات زیاد می‌بینید؟", null, start = true))
+        add(n("vm_e_scan", "problem_virus_malware", "اسکن آنتی‌ویروس", "پاکسازی اپ‌های مخرب", end = true))
+        add(n("vm_e_flash", "problem_virus_malware", "نیاز به فلش", "رام رسمی", end = true))
+
+        add(n("ps_q1", "problem_play_store_error", "آیا همه سرویس‌های Google مشکل دارند؟", null, start = true))
+        add(n("ps_e_cache", "problem_play_store_error", "پاکسازی Cache", "Clear Data Google Play", end = true))
+        add(n("ps_e_account", "problem_play_store_error", "مشکل حساب", "حذف و افزودن مجدد حساب", end = true))
+
+        add(n("sf_q1", "problem_storage_full", "آیا عکس/فیلم زیاد دارید؟", null, start = true))
+        add(n("sf_e_clean", "problem_storage_full", "پاکسازی فایل‌ها", "حذف فایل‌های اضافی", end = true))
+        add(n("sf_e_apps", "problem_storage_full", "اپ‌های سنگین", "حذف اپ‌های غیرضروری", end = true))
+
+        add(n("fr_q1", "problem_factory_reset_needed", "آیا بکاپ گرفته‌اید؟", null, start = true))
+        add(n("fr_e_reset", "problem_factory_reset_needed", "انجام ریست فکتوری", "تمام داده پاک می‌شود", end = true))
+
+        // ═══════════ SENSOR ═══════════
+        add(n("fp_q1", "problem_fingerprint_issue", "آیا انگشت تمیز و خشک است؟", null, start = true))
+        add(n("fp_q2", "problem_fingerprint_issue", "آیا اثر انگشت قبلاً ثبت شده؟"))
+        add(n("fp_e_clean", "problem_fingerprint_issue", "تمیزکاری", "پاک کردن سنسور", end = true))
+        add(n("fp_e_re_enroll", "problem_fingerprint_issue", "ثبت مجدد", "حذف و ثبت مجدد اثر انگشت", end = true))
+        add(n("fp_e_replace", "problem_fingerprint_issue", "خرابی سنسور", "تعویض سنسور", end = true))
+
+        add(n("prx_q1", "problem_proximity_sensor", "آیا در تماس صفحه خاموش نمی‌شود؟", null, start = true))
+        add(n("prx_e_clean", "problem_proximity_sensor", "گرفتگی", "تمیز کردن", end = true))
+        add(n("prx_e_replace", "problem_proximity_sensor", "خرابی سنسور", "تعویض سنسور", end = true))
+
+        add(n("gy_q1", "problem_gyroscope_issue", "آیا چرخش خودکار کار نمی‌کند؟", null, start = true))
+        add(n("gy_e_cal", "problem_gyroscope_issue", "کالیبراسیون", "کالیبره کنید", end = true))
+        add(n("gy_e_replace", "problem_gyroscope_issue", "خرابی سنسور", "تعویض", end = true))
+
+        add(n("fu_q1", "problem_face_unlock_issue", "آیا چهره قبلاً ثبت شده؟", null, start = true))
+        add(n("fu_e_re_enroll", "problem_face_unlock_issue", "ثبت مجدد چهره", "حذف و ثبت مجدد", end = true))
+        add(n("fu_e_ir", "problem_face_unlock_issue", "خرابی IR سنسور", "تعویض IR سنسور", end = true))
+
+        // ═══════════ WATER / HARDWARE ═══════════
+        add(n("wd_q1", "problem_water_damage", "چند وقت پیش آب‌خوردگی رخ داده؟", null, start = true))
+        add(n("wd_q2", "problem_water_damage", "آیا دستگاه داغ می‌شود؟"))
+        add(n("wd_e_ultrasonic", "problem_water_damage", "شستشوی اولتراسونیک", "برد تمیز شود", end = true))
+        add(n("wd_e_corrosion", "problem_water_damage", "خوردگی شدید", "تعویض قطعات معیوب", end = true))
+        add(n("wd_e_hopeless", "problem_water_damage", "غیرقابل تعمیر", "برد سوخته", end = true))
+
+        add(n("usb_q1", "problem_usb_issue", "آیا فقط شارژ می‌شود؟", null, start = true))
+        add(n("usb_q2", "problem_usb_issue", "آیا خطوط D+/D- تست شد؟"))
+        add(n("usb_e_cable", "problem_usb_issue", "کابل معیوب", "تعویض کابل", end = true))
+        add(n("usb_e_port", "problem_usb_issue", "خرابی کانکتور", "تعویض کانکتور", end = true))
+        add(n("usb_e_ic", "problem_usb_issue", "خرابی IC USB", "تعویض IC", end = true))
+
+        add(n("bcd_q1", "problem_back_cover_damage", "آیا شکستگی ظاهری دارد؟", null, start = true))
+        add(n("bcd_e_replace", "problem_back_cover_damage", "تعویض درب پشت", "درب جدید", end = true))
+
+        add(n("frm_q1", "problem_frame_bent", "آیا خم شدن واضح است؟", null, start = true))
+        add(n("frm_e_replace", "problem_frame_bent", "تعویض فریم", "فریم جدید", end = true))
+    }
 
     fun options(): List<DiagnosisOptionEntity> = buildList {
 
@@ -594,5 +702,82 @@ object DiagnosisSeedData {
 
         add(o("lc_o1", "lc_q1", "بله، در همه صداها", "lc_e_spk"))
         add(o("lc_o2", "lc_q1", "خیر، فقط در صدای بلند", "lc_e_amp"))
+
+        // ═══════════ CAMERA ═══════════
+        add(o("cam_o1", "cam_q1", "بله، باز می‌شود", "cam_q2"))
+        add(o("cam_o2", "cam_q1", "خیر، کرش می‌کند", "cam_e_app"))
+        add(o("cam_o3", "cam_q2", "بله، کاملاً سیاه", "cam_e_sensor"))
+        add(o("cam_o4", "cam_q2", "خیر، تصویر دارد", "cam_e_conn"))
+        add(o("cam_o5", "cam_q2", "نمی‌دانم", "cam_e_module"))
+
+        add(o("cb_o1", "cb_q1", "بله، کثیف است", "cb_e_clean"))
+        add(o("cb_o2", "cb_q1", "خیر، تمیز است", "cb_q2"))
+        add(o("cb_o3", "cb_q2", "بله، ضربه دیده", "cb_e_module"))
+        add(o("cb_o4", "cb_q2", "خیر، ضربه ندیده", "cb_e_ois"))
+
+        add(o("cbl_o1", "cbl_q1", "بله، در همه اپ‌ها سیاه", "cbl_e_sensor"))
+        add(o("cbl_o2", "cbl_q1", "خیر، فقط در یک اپ", "cbl_e_app"))
+
+        add(o("fc_o1", "fc_q1", "بله، باز می‌شود", "fc_e_conn"))
+        add(o("fc_o2", "fc_q1", "خیر، سیاه است", "fc_e_module"))
+
+        add(o("fl_o1", "fl_q1", "بله، در چراغ‌قوه کار می‌کند", "fl_e_ic"))
+        add(o("fl_o2", "fl_q1", "خیر، آن هم نه", "fl_e_led"))
+
+        add(o("cls_o1", "cls_q1", "بله، خط روی لنز است", "cls_e_replace"))
+        add(o("cls_o2", "cls_q1", "خیر، خط نیست", "cls_e_replace"))
+
+        // ═══════════ SOFTWARE ═══════════
+        add(o("ss_o1", "ss_q1", "بله، حافظه پر است", "ss_e_storage"))
+        add(o("ss_o2", "ss_q1", "خیر، فضا دارد", "ss_q2"))
+        add(o("ss_o3", "ss_q2", "بله، بعد از آپدیت", "ss_e_reset"))
+        add(o("ss_o4", "ss_q2", "خیر، همیشه کند", "ss_e_storage_hw"))
+
+        add(o("ac_o1", "ac_q1", "بله، همه اپ‌ها", "ac_e_reset"))
+        add(o("ac_o2", "ac_q1", "خیر، فقط بعضی اپ‌ها", "ac_e_sw"))
+
+        add(o("vm_o1", "vm_q1", "بله، تبلیغات زیاد", "vm_e_scan"))
+        add(o("vm_o2", "vm_q1", "خیر، تبلیغات نیست", "vm_e_scan"))
+
+        add(o("ps_o1", "ps_q1", "بله، همه Google مشکل دارد", "ps_e_account"))
+        add(o("ps_o2", "ps_q1", "خیر، فقط Play", "ps_e_cache"))
+
+        add(o("sf_o1", "sf_q1", "بله، عکس/فیلم زیاد", "sf_e_clean"))
+        add(o("sf_o2", "sf_q1", "خیر، اپ‌های سنگین", "sf_e_apps"))
+
+        add(o("fr_o1", "fr_q1", "بله، بکاپ گرفته‌ام", "fr_e_reset"))
+        add(o("fr_o2", "fr_q1", "خیر، بکاپ نگرفته‌ام", "fr_e_reset"))
+
+        // ═══════════ SENSOR ═══════════
+        add(o("fp_o1", "fp_q1", "بله، تمیز است", "fp_q2"))
+        add(o("fp_o2", "fp_q1", "خیر، کثیف یا خیس", "fp_e_clean"))
+        add(o("fp_o3", "fp_q2", "بله، ثبت شده", "fp_e_re_enroll"))
+        add(o("fp_o4", "fp_q2", "خیر، ثبت نشده", "fp_e_replace"))
+
+        add(o("prx_o1", "prx_q1", "بله، خاموش نمی‌شود", "prx_e_clean"))
+        add(o("prx_o2", "prx_q1", "خیر، کار می‌کند", "prx_e_replace"))
+
+        add(o("gy_o1", "gy_q1", "بله، چرخش کار نمی‌کند", "gy_e_cal"))
+        add(o("gy_o2", "gy_q1", "خیر، کند کار می‌کند", "gy_e_replace"))
+
+        add(o("fu_o1", "fu_q1", "بله، ثبت شده", "fu_e_re_enroll"))
+        add(o("fu_o2", "fu_q1", "خیر، ثبت نشده", "fu_e_ir"))
+
+        // ═══════════ WATER / HARDWARE ═══════════
+        add(o("wd_o1", "wd_q1", "کمتر از 24 ساعت", "wd_e_ultrasonic"))
+        add(o("wd_o2", "wd_q1", "بیشتر از 24 ساعت", "wd_q2"))
+        add(o("wd_o3", "wd_q2", "بله، داغ می‌شود", "wd_e_corrosion"))
+        add(o("wd_o4", "wd_q2", "خیر، سرد است", "wd_e_hopeless"))
+
+        add(o("usb_o1", "usb_q1", "بله، فقط شارژ", "usb_q2"))
+        add(o("usb_o2", "usb_q1", "خیر، کاملاً نمی‌شناسد", "usb_e_cable"))
+        add(o("usb_o3", "usb_q2", "بله، قطع هستند", "usb_e_ic"))
+        add(o("usb_o4", "usb_q2", "خیر، سالم هستند", "usb_e_port"))
+
+        add(o("bcd_o1", "bcd_q1", "بله، شکسته", "bcd_e_replace"))
+        add(o("bcd_o2", "bcd_q1", "خیر، فقط خط افتاده", "bcd_e_replace"))
+
+        add(o("frm_o1", "frm_q1", "بله، خم شده", "frm_e_replace"))
+        add(o("frm_o2", "frm_q1", "خیر، صاف است", "frm_e_replace"))
     }
 }
