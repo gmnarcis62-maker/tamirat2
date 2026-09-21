@@ -2,4 +2,24 @@
 <resources>
     <string name="app_name">RedLine Tamirkar</string>
     <string name="widget_label">RedLine Widget</string>
+    
+    <string name="menu_models">مدل‌ها</string>
+    <string name="menu_tools">ابزارها</string>
+    <string name="menu_power">تست پاور</string>
+    <string name="menu_schematics">نقشه‌خوانی</string>
+    <string name="menu_secret_codes">کدهای مخفی</string>
+    <string name="menu_customer">مشتریان</string>
+    <string name="menu_brands">برندها</string>
+    <string name="menu_backup">پشتیبان‌گیری</string>
+    <string name="menu_problems">عیب‌یابی</string>
+    
+    <string name="hint_rotate">دکمه را بچرخانید و برای ورود بزنید</string>
+    <string name="hint_select">انتخاب کنید</string>
+    <string name="hint_enter">برای ورود، دوباره کلیک کنید</string>
+    <string name="hint_center">دکمه مرکزی را بچرخانید تا ابزار مورد نظر را انتخاب کنید</string>
+    <string name="app_subtitle">دستیار تعمیرکار</string>
+    
+    <string name="settings">تنظیمات</string>
+    <string name="settings_rotary_menu">منوی دایره‌ای (چرخشی)</string>
+    <string name="settings_rotary_menu_desc">استفاده از دکمه چرخشی به جای منوی معمولی</string>
 </resources>

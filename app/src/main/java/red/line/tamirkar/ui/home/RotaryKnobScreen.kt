@@ -25,17 +25,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.launch
+import red.line.tamirkar.R
 import kotlin.math.*
 
 @Composable
 fun RotaryKnobScreen(
     onMenuItemClick: (String) -> Unit,
-    viewModel: RotaryKnobViewModel = hiltViewModel()
+    onSettingsClick: () -> Unit,
+    viewModel: HomeViewModel
 ) {
     val rotationAngle by viewModel.rotationAngle.collectAsState()
     val selectedIndex by viewModel.selectedIndex.collectAsState()
@@ -47,14 +48,12 @@ fun RotaryKnobScreen(
     val view = LocalView.current
     val scope = rememberCoroutineScope()
 
-    // Animate snap
     val animatedRotation by animateFloatAsState(
         targetValue = rotationAngle,
         animationSpec = tween(300, easing = FastOutSlowInEasing),
         label = "rotation"
     )
 
-    // Haptic feedback on selection change
     LaunchedEffect(selectedIndex) {
         view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
     }
@@ -64,7 +63,6 @@ fun RotaryKnobScreen(
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Glassmorphism overlay
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,13 +76,23 @@ fun RotaryKnobScreen(
                 )
         )
 
+        // دکمه تنظیمات در بالای صفحه دایره‌ای
+        IconButton(
+            onClick = onSettingsClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 40.dp, end = 24.dp)
+                .background(Color.White.copy(alpha = 0.1f), CircleShape)
+        ) {
+            Icon(Icons.Default.Settings, contentDescription = "تنظیمات", tint = Color.White)
+        }
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Top info card (glassmorphism)
             InfoPanel(
                 selectedItem = selectedItem,
                 modifier = Modifier.padding(horizontal = 20.dp)
@@ -92,14 +100,11 @@ fun RotaryKnobScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Rotary Dial Area
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                // Outer decorative rings
                 Canvas(modifier = Modifier.size(380.dp)) {
-                    // Outer neon ring
                     drawCircle(
                         brush = Brush.sweepGradient(
                             colors = listOf(
@@ -117,7 +122,6 @@ fun RotaryKnobScreen(
                         style = Stroke(width = 2f)
                     )
 
-                    // Tick marks around the dial
                     val tickCount = 60
                     val outerRadius = size.minDimension / 2 - 24f
                     val innerRadius = size.minDimension / 2 - 36f
@@ -143,27 +147,26 @@ fun RotaryKnobScreen(
                     }
                 }
 
-                // Radial menu items
                 RadialMenuItems(
                     menuItems = menuItems,
                     selectedIndex = selectedIndex,
                     isDragging = isDragging,
                     rotationAngle = animatedRotation,
                     onItemClick = { index ->
-                        viewModel.selectItem(index)
-                        val route = menuItems[index].route
-                        onMenuItemClick(route)
+                        if (selectedIndex == index) {
+                            val route = menuItems[index].route
+                            onMenuItemClick(route)
+                        } else {
+                            viewModel.selectItem(index)
+                        }
                     }
                 )
 
-                // Rotary Knob (center)
                 RotaryKnob(
                     rotationAngle = animatedRotation,
                     selectedItem = selectedItem,
                     isDragging = isDragging,
-                    onRotationDelta = { delta ->
-                        viewModel.onRotationDelta(delta)
-                    },
+                    onRotationDelta = { delta -> viewModel.onRotationDelta(delta) },
                     onDragStart = { viewModel.onDragStart() },
                     onDragEnd = { viewModel.onDragEnd() },
                     onClick = {
@@ -174,9 +177,8 @@ fun RotaryKnobScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Bottom hint
             Text(
-                text = "دکمه را بچرخانید و برای ورود بزنید",
+                text = stringResource(id = R.string.hint_rotate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.5f),
                 textAlign = TextAlign.Center,
@@ -197,47 +199,30 @@ fun InfoPanel(selectedItem: red.line.tamirkar.domain.model.RotaryMenuItem?, modi
         label = "info_panel"
     ) { item ->
         Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .heightIn(min = 110.dp),
+            modifier = modifier.fillMaxWidth().heightIn(min = 110.dp),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF0D1B2A).copy(alpha = 0.72f)
-            ),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF0D1B2A).copy(alpha = 0.72f)),
             border = androidx.compose.foundation.BorderStroke(
                 width = 1.dp,
                 brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF00E5FF).copy(alpha = 0.5f),
-                        Color(0xFFE040FB).copy(alpha = 0.3f)
-                    )
+                    colors = listOf(Color(0xFF00E5FF).copy(alpha = 0.5f), Color(0xFFE040FB).copy(alpha = 0.3f))
                 )
             )
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Neon indicator dot
                     val color = item?.color ?: Color(0xFF00E5FF)
                     Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(color.copy(alpha = 0.9f), CircleShape)
-                            .shadow(8.dp, CircleShape, spotColor = color)
+                        modifier = Modifier.size(10.dp).background(color.copy(alpha = 0.9f), CircleShape).shadow(8.dp, CircleShape, spotColor = color)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = item?.label ?: "دستیار تعمیرکار",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            color = Color.White,
-                            fontSize = 22.sp
-                        ),
+                        text = item?.label ?: stringResource(id = R.string.app_subtitle),
+                        style = MaterialTheme.typography.headlineSmall.copy(color = Color.White, fontSize = 22.sp),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -248,10 +233,12 @@ fun InfoPanel(selectedItem: red.line.tamirkar.domain.model.RotaryMenuItem?, modi
                     "troubleshoot" -> "عیب‌یابی هوشمند با درخت تصمیم برای تشخیص سریع مشکل"
                     "schematics" -> "مشاهده نقشه‌های شماتیک برد و مسیرهای تغذیه"
                     "power_diag" -> "تشخیص جریان‌کشی و تست نقاط تغذیه با راهنما"
-                    "component_test" -> "تست قطعات SMD، ICها و مدارهای جانبی"
-                    "pinouts" -> "جدول پین‌اوت سوکت‌ها و کانکتورهای رایج"
                     "secret_codes" -> "کدهای مخفی سرویس و تست سخت‌افزاری"
-                    else -> "دکمه مرکزی را بچرخانید تا ابزار مورد نظر را انتخاب کنید"
+                    "brands" -> "لیست برندها و مدل‌های گوشی‌های موجود"
+                    "backup" -> "تهیه نسخه پشتیبان از اطلاعات برنامه"
+                    "customer" -> "مدیریت اطلاعات مشتریان و تعمیرات"
+                    "models" -> "جستجو و انتخاب مدل گوشی مورد نظر"
+                    else -> stringResource(id = R.string.hint_center)
                 }
 
                 Text(
@@ -276,10 +263,7 @@ fun RadialMenuItems(
 ) {
     val radius = 145.dp
 
-    Box(
-        modifier = Modifier.size(380.dp),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = Modifier.size(380.dp), contentAlignment = Alignment.Center) {
         menuItems.forEachIndexed { index, item ->
             val isSelected = index == selectedIndex
             val angleRad = Math.toRadians((item.angleDegrees - rotationAngle).toDouble() - 90.0)
@@ -304,63 +288,46 @@ fun RadialMenuItems(
                     .size(64.dp)
                     .scale(scale)
                     .clickable { onItemClick(index) }
-                    .graphicsLayer {
-                        this.alpha = if (isDragging || isSelected) 1f else 0.85f
-                    },
+                    .graphicsLayer { this.alpha = if (isDragging || isSelected) 1f else 0.85f },
                 contentAlignment = Alignment.Center
             ) {
-                // Neon glow background
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    item.color.copy(alpha = glowAlpha * 0.5f),
-                                    item.color.copy(alpha = 0f)
-                                )
-                            ),
-                            shape = CircleShape
-                        )
+                    modifier = Modifier.fillMaxSize().background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(item.color.copy(alpha = glowAlpha * 0.5f), item.color.copy(alpha = 0f))
+                        ),
+                        shape = CircleShape
+                    )
                 )
 
-                // Item circle
                 Box(
                     modifier = Modifier
                         .size(52.dp)
                         .background(
                             brush = Brush.radialGradient(
-                                colors = listOf(
-                                    item.color.copy(alpha = 0.25f),
-                                    Color(0xFF0A1929).copy(alpha = 0.9f)
-                                )
+                                colors = listOf(item.color.copy(alpha = 0.25f), Color(0xFF0A1929).copy(alpha = 0.9f))
                             ),
                             shape = CircleShape
                         )
                         .border(
                             width = if (isSelected) 2.5.dp else 1.2.dp,
                             brush = Brush.linearGradient(
-                                colors = listOf(
-                                    item.color.copy(alpha = glowAlpha),
-                                    item.color.copy(alpha = glowAlpha * 0.5f)
-                                )
+                                colors = listOf(item.color.copy(alpha = glowAlpha), item.color.copy(alpha = glowAlpha * 0.5f))
                             ),
                             shape = CircleShape
                         )
-                        .shadow(
-                            elevation = if (isSelected) 12.dp else 4.dp,
-                            shape = CircleShape,
-                            spotColor = item.color
-                        ),
+                        .shadow(elevation = if (isSelected) 12.dp else 4.dp, shape = CircleShape, spotColor = item.color),
                     contentAlignment = Alignment.Center
                 ) {
                     val icon = when (item.id) {
                         "troubleshoot" -> Icons.Default.Build
                         "schematics" -> Icons.Default.Map
                         "power_diag" -> Icons.Default.Bolt
-                        "component_test" -> Icons.Default.Memory
-                        "pinouts" -> Icons.Default.SettingsEthernet
                         "secret_codes" -> Icons.Default.Code
+                        "brands" -> Icons.Default.Storefront
+                        "backup" -> Icons.Default.Backup
+                        "customer" -> Icons.Default.People
+                        "models" -> Icons.Default.PhoneAndroid
                         else -> Icons.Default.Circle
                     }
                     Icon(
@@ -371,18 +338,16 @@ fun RadialMenuItems(
                     )
                 }
 
-                // Label below icon
-                if (isSelected) {
-                    Text(
-                        text = item.label,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = item.color.copy(alpha = 0.95f),
-                            fontSize = 11.sp
-                        ),
-                        modifier = Modifier.offset(y = 38.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                Text(
+                    text = item.label,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = if (isSelected) item.color.copy(alpha = 0.95f) else Color.White.copy(alpha = 0.6f),
+                        fontSize = if (isSelected) 11.sp else 10.sp
+                    ),
+                    modifier = Modifier.offset(y = 42.dp),
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
             }
         }
     }
@@ -417,13 +382,9 @@ fun RotaryKnob(
                     val centerY = center.y
 
                     val startAngle = atan2(touchY - centerY, touchX - centerX)
-                    val endAngle = atan2(
-                        touchY + dragAmount.y - centerY,
-                        touchX + dragAmount.x - centerX
-                    )
+                    val endAngle = atan2(touchY + dragAmount.y - centerY, touchX + dragAmount.x - centerX)
                     var delta = Math.toDegrees((endAngle - startAngle).toDouble()).toFloat()
 
-                    // Normalize delta to avoid jumps
                     if (delta > 180) delta -= 360
                     if (delta < -180) delta += 360
 
@@ -435,12 +396,9 @@ fun RotaryKnob(
                 center = Offset(pos.size.width / 2f, pos.size.height / 2f)
             }
             .clickable(onClick = onClick)
-            .graphicsLayer {
-                rotationZ = rotationAngle
-            },
+            .graphicsLayer { rotationZ = rotationAngle },
         contentAlignment = Alignment.Center
     ) {
-        // Outer glow ring
         val glowColor = selectedItem?.color ?: Color(0xFF00E5FF)
         val glowAlpha by animateFloatAsState(
             targetValue = if (isDragging) 0.7f else 0.4f,
@@ -449,77 +407,40 @@ fun RotaryKnob(
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            glowColor.copy(alpha = glowAlpha * 0.35f),
-                            glowColor.copy(alpha = 0f)
-                        )
-                    ),
-                    shape = CircleShape
-                )
+            modifier = Modifier.fillMaxSize().background(
+                brush = Brush.radialGradient(colors = listOf(glowColor.copy(alpha = glowAlpha * 0.35f), glowColor.copy(alpha = 0f))),
+                shape = CircleShape
+            )
         )
 
-        // Main knob body
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     brush = Brush.radialGradient(
-                        colors = listOf(
-                            Color(0xFF1B3A4B).copy(alpha = 0.95f),
-                            Color(0xFF0D1B2A).copy(alpha = 0.98f),
-                            Color(0xFF000000).copy(alpha = 0.99f)
-                        )
+                        colors = listOf(Color(0xFF1B3A4B).copy(alpha = 0.95f), Color(0xFF0D1B2A).copy(alpha = 0.98f), Color(0xFF000000).copy(alpha = 0.99f))
                     ),
                     shape = CircleShape
                 )
                 .border(
                     width = 2.5.dp,
-                    brush = Brush.sweepGradient(
-                        colors = listOf(
-                            glowColor.copy(alpha = glowAlpha),
-                            glowColor.copy(alpha = glowAlpha * 0.4f),
-                            glowColor.copy(alpha = glowAlpha)
-                        )
-                    ),
+                    brush = Brush.sweepGradient(colors = listOf(glowColor.copy(alpha = glowAlpha), glowColor.copy(alpha = glowAlpha * 0.4f), glowColor.copy(alpha = glowAlpha))),
                     shape = CircleShape
                 )
-                .shadow(
-                    elevation = 20.dp,
-                    shape = CircleShape,
-                    spotColor = glowColor
-                ),
+                .shadow(elevation = 20.dp, shape = CircleShape, spotColor = glowColor),
             contentAlignment = Alignment.Center
         ) {
-            // Inner decorative ring
             Box(
                 modifier = Modifier
                     .size(130.dp)
                     .background(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                Color(0xFF00E5FF).copy(alpha = 0.08f),
-                                Color.Transparent
-                            )
-                        ),
+                        brush = Brush.radialGradient(colors = listOf(Color(0xFF00E5FF).copy(alpha = 0.08f), Color.Transparent)),
                         shape = CircleShape
                     )
-                    .border(
-                        width = 1.dp,
-                        color = glowColor.copy(alpha = 0.3f),
-                        shape = CircleShape
-                    )
+                    .border(width = 1.dp, color = glowColor.copy(alpha = 0.3f), shape = CircleShape)
             )
 
-            // Center content
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                // Selection indicator line (top)
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Box(
                     modifier = Modifier
                         .size(4.dp, 14.dp)
@@ -527,7 +448,6 @@ fun RotaryKnob(
                         .offset(y = (-55).dp)
                 )
 
-                // Selected item label
                 val labelScale by animateFloatAsState(
                     targetValue = if (isDragging) 0.92f else 1f,
                     animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -535,29 +455,18 @@ fun RotaryKnob(
                 )
 
                 Text(
-                    text = selectedItem?.label ?: "انتخاب",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = glowColor.copy(alpha = 0.95f),
-                        fontSize = 18.sp
-                    ),
+                    text = selectedItem?.label ?: stringResource(id = R.string.hint_select),
+                    style = MaterialTheme.typography.titleMedium.copy(color = glowColor.copy(alpha = 0.95f), fontSize = 18.sp),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.scale(labelScale)
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Decorative dots
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     repeat(3) { i ->
                         val dotAlpha = if (i == 1) 1f else 0.4f
-                        Box(
-                            modifier = Modifier
-                                .size(5.dp)
-                                .background(
-                                    glowColor.copy(alpha = dotAlpha),
-                                    CircleShape
-                                )
-                        )
+                        Box(modifier = Modifier.size(5.dp).background(glowColor.copy(alpha = dotAlpha), CircleShape))
                     }
                 }
             }
