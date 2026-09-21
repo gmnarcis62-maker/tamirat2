@@ -36,12 +36,12 @@ class RotaryKnobViewModel @Inject constructor() : ViewModel() {
             route = "problem_list"
         ),
         RotaryMenuItem(
-            id = "schematics",
-            label = "نقشه‌خوانی",
+            id = "brands",
+            label = "برندها",
             icon = null,
             angleDegrees = 315f,
             color = Color(0xFFFFD740),
-            route = "schematics"
+            route = "brands"
         ),
         RotaryMenuItem(
             id = "power_diag",
@@ -52,44 +52,44 @@ class RotaryKnobViewModel @Inject constructor() : ViewModel() {
             route = "power_diagnostics"
         ),
         RotaryMenuItem(
-            id = "component_test",
-            label = "تست قطعات",
-            icon = null,
-            angleDegrees = 45f,
-            color = Color(0xFFFF4081),
-            route = "component_tester"
-        ),
-        RotaryMenuItem(
-            id = "pinouts",
-            label = "پین‌اوت‌ها",
-            icon = null,
-            angleDegrees = 90f,
-            color = Color(0xFFE040FB),
-            route = "pinouts"
-        ),
-        RotaryMenuItem(
             id = "secret_codes",
             label = "کدهای مخفی",
             icon = null,
-            angleDegrees = 135f,
-            color = Color(0xFFFFAB40),
+            angleDegrees = 45f,
+            color = Color(0xFFE040FB),
             route = "secret_codes"
         ),
         RotaryMenuItem(
             id = "backup",
             label = "پشتیبان‌گیری",
             icon = null,
-            angleDegrees = 180f,
-            color = Color(0xFFEF5350),
+            angleDegrees = 90f,
+            color = Color(0xFFFFAB40),
             route = "backup"
         ),
         RotaryMenuItem(
             id = "customer",
             label = "مشتریان",
             icon = null,
-            angleDegrees = 225f,
-            color = Color(0xFF26C6DA),
+            angleDegrees = 135f,
+            color = Color(0xFFEF5350),
             route = "customer"
+        ),
+        RotaryMenuItem(
+            id = "schematics",
+            label = "نقشه‌خوانی",
+            icon = null,
+            angleDegrees = 180f,
+            color = Color(0xFF26C6DA),
+            route = "schematics"
+        ),
+        RotaryMenuItem(
+            id = "models",
+            label = "مدل‌ها",
+            icon = null,
+            angleDegrees = 225f,
+            color = Color(0xFFAB47BC),
+            route = "models"
         )
     )
 

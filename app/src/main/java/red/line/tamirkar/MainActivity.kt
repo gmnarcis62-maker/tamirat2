@@ -20,11 +20,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import red.line.tamirkar.ui.backup.BackupScreen
+import red.line.tamirkar.ui.brands.BrandsScreen
 import red.line.tamirkar.ui.codes.SecretCodesScreen
 import red.line.tamirkar.ui.customer.CustomerScreen
 import red.line.tamirkar.ui.diagnosis.DiagnosisStartScreen
 import red.line.tamirkar.ui.diagnosis.DiagnosisWizardScreen
 import red.line.tamirkar.ui.home.RotaryKnobScreen
+import red.line.tamirkar.ui.models.ModelsScreen
 import red.line.tamirkar.ui.power.PowerDiagnosticsScreen
 import red.line.tamirkar.ui.problems.ProblemDetailScreen
 import red.line.tamirkar.ui.problems.ProblemListScreen
@@ -65,6 +67,8 @@ fun AppNavHost() {
                         "secret_codes" -> navController.navigate("secret_codes")
                         "backup" -> navController.navigate("backup")
                         "customer" -> navController.navigate("customer")
+                        "brands" -> navController.navigate("brands")
+                        "models" -> navController.navigate("models")
                         else -> navController.navigate("placeholder/$route")
                     }
                 }
@@ -145,12 +149,34 @@ fun AppNavHost() {
         composable("customer") {
             CustomerScreen(
                 onBackClick = { navController.popBackStack() },
-                onAddCustomer = {
-                    // TODO: navigate to AddEditCustomerScreen
-                },
-                onCustomerClick = { customerId ->
-                    // TODO: navigate to customer details
+                onAddCustomer = { /* TODO */ },
+                onCustomerClick = { /* TODO */ }
+            )
+        }
+
+        composable("brands") {
+            BrandsScreen(
+                onBackClick = { navController.popBackStack() },
+                onBrandClick = { brandId ->
+                    navController.navigate("models_by_brand/$brandId")
                 }
+            )
+        }
+
+        composable(
+            route = "models_by_brand/{brandId}",
+            arguments = listOf(navArgument("brandId") { type = NavType.StringType })
+        ) {
+            ModelsScreen(
+                onBackClick = { navController.popBackStack() },
+                onModelClick = { /* TODO */ }
+            )
+        }
+
+        composable("models") {
+            ModelsScreen(
+                onBackClick = { navController.popBackStack() },
+                onModelClick = { /* TODO */ }
             )
         }
 
