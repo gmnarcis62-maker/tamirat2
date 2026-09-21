@@ -1,10 +1,8 @@
 package red.line.tamirkar.ui.problems
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -16,13 +14,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import red.line.tamirkar.domain.model.Problem
 import red.line.tamirkar.domain.model.ProblemCategory
 import red.line.tamirkar.domain.model.ProblemSeverity
-import red.line.tamirkar.domain.model.RepairDifficulty
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,10 +113,14 @@ fun ProblemListScreen(
                 }
 
                 // All problems
+                val categoryForHeader = selectedCategory
+                val headerText = when {
+                    searchQuery.isNotBlank() -> "نتیجه جستجو (${problems.size})"
+                    categoryForHeader != null -> "${categoryForHeader.label} (${problems.size})"
+                    else -> "همه مشکلات (${problems.size})"
+                }
                 Text(
-                    text = if (searchQuery.isNotBlank()) "نتایج جستجو (${problems.size})"
-                    else if (selectedCategory != null) "${selectedCategory.label} (${problems.size})"
-                    else "همه مشکلات (${problems.size})",
+                    text = headerText,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -145,17 +145,17 @@ fun CategoryFilterChips(
     selectedCategory: ProblemCategory?,
     onCategorySelected: (ProblemCategory?) -> Unit
 ) {
-    val categories = listOf(null) + ProblemCategory.entries
-    val scrollState = rememberScrollState()
+    val categories: List<ProblemCategory?> = listOf(null) + ProblemCategory.entries
+    val chipScrollState = rememberScrollState()
 
-    Row(modifier = Modifier.horizontalScroll(scrollState)) {
+    Row(modifier = Modifier.horizontalScroll(chipScrollState)) {
         categories.forEach { category ->
-            val isSelected = category == selectedCategory || (category == null && selectedCategory == null)
+            val isSelected = category == selectedCategory
             FilterChip(
                 selected = isSelected,
                 onClick = { onCategorySelected(category) },
                 label = {
-                    Text(category?.label ?: "مه")
+                    Text(category?.label ?: "همه")
                 },
                 modifier = Modifier.padding(end = 8.dp),
                 leadingIcon = if (isSelected) {
@@ -198,7 +198,7 @@ fun ProblemCard(problem: Problem, onClick: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            Divider()
+            HorizontalDivider()
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -223,7 +223,7 @@ fun ProblemCard(problem: Problem, onClick: () -> Unit) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Default.Timer,
+                        imageVector = Icons.Default.DateRange,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
                         tint = MaterialTheme.colorScheme.outline
@@ -238,7 +238,7 @@ fun ProblemCard(problem: Problem, onClick: () -> Unit) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Default.TrendingUp,
+                        imageVector = Icons.Default.Check,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp),
                         tint = Color(0xFF4CAF50)
@@ -287,7 +287,7 @@ fun ProblemCard(problem: Problem, onClick: () -> Unit) {
 
 @Composable
 fun SeverityBadge(severity: ProblemSeverity) {
-    val color = Color(severity.color.toLong())
+    val color = parseColor(severity.color)
     Surface(
         shape = RoundedCornerShape(10.dp),
         color = color.copy(alpha = 0.12f)
@@ -301,6 +301,14 @@ fun SeverityBadge(severity: ProblemSeverity) {
     }
 }
 
+private fun parseColor(hex: String): Color {
+    return try {
+        Color(android.graphics.Color.parseColor(hex))
+    } catch (e: Exception) {
+        Color.Gray
+    }
+}
+
 @Composable
 fun EmptyProblemsState() {
     Column(
@@ -310,7 +318,7 @@ fun EmptyProblemsState() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            Icons.Default.BuildCircle,
+            Icons.Default.Build,
             null,
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)

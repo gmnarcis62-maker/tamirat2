@@ -1,6 +1,5 @@
 package red.line.tamirkar.ui.problems
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,13 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import red.line.tamirkar.domain.model.Problem
 import red.line.tamirkar.domain.model.ProblemSeverity
-import red.line.tamirkar.domain.model.RepairGuide
 import red.line.tamirkar.domain.model.RepairDifficulty
+import red.line.tamirkar.domain.model.RepairGuide
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,12 +54,24 @@ fun ProblemDetailScreen(
             )
         }
     ) { padding ->
+        val currentProblem = problem
         if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
                 CircularProgressIndicator()
             }
-        } else if (problem == null) {
-            ErrorState(onRetry = { viewModel.refresh() })
+        } else if (currentProblem == null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                ErrorState(onRetry = { viewModel.refresh() })
+            }
         } else {
             Column(
                 modifier = Modifier
@@ -69,17 +81,20 @@ fun ProblemDetailScreen(
                     .verticalScroll(scrollState)
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ProblemHeader(problem = problem!!)
+                ProblemHeader(problem = currentProblem)
                 Spacer(modifier = Modifier.height(20.dp))
-                SymptomsSection(problem = problem!!)
+                SymptomsSection(problem = currentProblem)
                 Spacer(modifier = Modifier.height(20.dp))
-                CausesSection(problem = problem!!)
+                CausesSection(problem = currentProblem)
                 Spacer(modifier = Modifier.height(20.dp))
-                ToolsAndPartsSection(problem = problem!!)
+                ToolsAndPartsSection(problem = currentProblem)
                 Spacer(modifier = Modifier.height(20.dp))
-                WarningsSection(problem = problem!!)
+                WarningsSection(problem = currentProblem)
                 Spacer(modifier = Modifier.height(20.dp))
-                RepairGuideCard(repairGuide = repairGuide, onGuideClick = { onGuideClick(problemId) })
+                RepairGuideCard(
+                    repairGuide = repairGuide,
+                    onGuideClick = { onGuideClick(problemId) }
+                )
                 Spacer(modifier = Modifier.height(20.dp))
                 RelatedProblemsSection(
                     relatedProblems = relatedProblems,
@@ -98,27 +113,19 @@ fun ProblemHeader(problem: Problem) {
         shape = RoundedCornerShape(20.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = problem.title,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = problem.description,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+            Text(
+                text = problem.title,
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = problem.description,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
-            Divider()
+            HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
@@ -126,24 +133,24 @@ fun ProblemHeader(problem: Problem) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 InfoItem(
-                    icon = Icons.Default.Timer,
+                    icon = Icons.Default.DateRange,
                     label = "زمان تقریبی",
                     value = problem.estimatedFixTime
                 )
                 InfoItem(
-                    icon = Icons.Default.AttachMoney,
+                    icon = Icons.Default.ShoppingCart,
                     label = "هزینه تقریبی",
                     value = problem.estimatedCost
                 )
                 InfoItem(
-                    icon = Icons.Default.TrendingUp,
+                    icon = Icons.Default.Check,
                     label = "نرخ موفقیت",
                     value = "${problem.successRate}%"
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Divider()
+            HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
@@ -170,7 +177,7 @@ fun ProblemHeader(problem: Problem) {
 }
 
 @Composable
-fun InfoItem(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, value: String) {
+fun InfoItem(icon: ImageVector, label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(icon, null, modifier = Modifier.size(22.dp), tint = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(4.dp))
@@ -224,7 +231,7 @@ fun DifficultyBadge(difficulty: RepairDifficulty) {
 
 @Composable
 fun SymptomsSection(problem: Problem) {
-    DetailSection(title = "علائم و نشانه‌ها", icon = Icons.Default.Medication) {
+    DetailSection(title = "علائم و نشانه‌ها", icon = Icons.Default.Info) {
         problem.symptoms.forEachIndexed { index, symptom ->
             Row(
                 modifier = Modifier
@@ -258,7 +265,7 @@ fun SymptomsSection(problem: Problem) {
 
 @Composable
 fun CausesSection(problem: Problem) {
-    DetailSection(title = "علل رایج", icon = Icons.Default.ReportProblem) {
+    DetailSection(title = "علل رایج", icon = Icons.Default.Warning) {
         problem.commonCauses.forEachIndexed { index, cause ->
             Row(
                 modifier = Modifier
@@ -296,7 +303,7 @@ fun ToolsAndPartsSection(problem: Problem) {
         if (problem.requiredTools.isNotEmpty()) {
             DetailSection(
                 title = "ابزار مورد نیاز",
-                icon = Icons.Default.Construction,
+                icon = Icons.Default.Build,
                 modifier = Modifier.weight(1f)
             ) {
                 problem.requiredTools.forEach { tool ->
@@ -308,7 +315,7 @@ fun ToolsAndPartsSection(problem: Problem) {
         if (problem.requiredParts.isNotEmpty()) {
             DetailSection(
                 title = "قطعات مورد نیاز",
-                icon = Icons.Default.Memory,
+                icon = Icons.Default.Settings,
                 modifier = Modifier.weight(1f)
             ) {
                 problem.requiredParts.forEach { part ->
@@ -413,7 +420,7 @@ fun RepairGuideCard(repairGuide: RepairGuide?, onGuideClick: () -> Unit) {
                 }
                 if (repairGuide != null) {
                     Icon(
-                        Icons.Default.ChevronRight,
+                        Icons.Default.KeyboardArrowRight,
                         null,
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -427,21 +434,6 @@ fun RepairGuideCard(repairGuide: RepairGuide?, onGuideClick: () -> Unit) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline
                 )
-            } else {
-                Spacer(modifier = Modifier.height(12.dp))
-                LinearProgressIndicator(
-                    progress = { 0f },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "برای مشاهده راهنمای گام‌به‌گام کلیک کنید",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
     }
@@ -453,7 +445,7 @@ fun RelatedProblemsSection(
     onProblemClick: (String) -> Unit
 ) {
     if (relatedProblems.isEmpty()) return
-    DetailSection(title = "مشکلات مرتبط", icon = Icons.Default.Link) {
+    DetailSection(title = "مشکلات مرتبط", icon = Icons.Default.Share) {
         relatedProblems.forEach { problem ->
             ElevatedCard(
                 modifier = Modifier
@@ -487,7 +479,7 @@ fun RelatedProblemsSection(
                         )
                     }
                     Icon(
-                        Icons.Default.ChevronRight,
+                        Icons.Default.KeyboardArrowRight,
                         null,
                         tint = MaterialTheme.colorScheme.outline
                     )
@@ -500,7 +492,7 @@ fun RelatedProblemsSection(
 @Composable
 fun DetailSection(
     title: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -550,7 +542,7 @@ fun ErrorState(onRetry: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Default.ErrorOutline,
+            Icons.Default.Warning,
             null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.error
@@ -559,7 +551,7 @@ fun ErrorState(onRetry: () -> Unit) {
         Text("خطا در بارگذاری", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onRetry) {
-            Icon(Icons.Default.Replay, null)
+            Icon(Icons.Default.Refresh, null)
             Spacer(modifier = Modifier.width(8.dp))
             Text("تلاش مجدد")
         }
